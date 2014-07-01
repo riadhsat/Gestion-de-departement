@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 29 mars 2014 16:50:59 by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="com.projetIF4.model.ChoixProjet" table="choix_projet" catalog="pfa">
+        <composite-id name="id" class="com.projetIF4.model.ChoixProjetId">
+            <key-property name="cinetud1" type="int">
+                <column name="cinetud1" />
+            </key-property>
+            <key-property name="codeProjet" type="int">
+                <column name="codeProjet" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="projetpropose" class="com.projetIF4.model.Projetpropose" update="false" insert="false" fetch="select">
+            <column name="codeProjet" not-null="true" />
+        </many-to-one>
+        <many-to-one name="etudiantByCinetud2" class="com.projetIF4.model.Etudiant" fetch="select">
+            <column name="cinetud2" />
+        </many-to-one>
+        <many-to-one name="etudiantByCinetud1" class="com.projetIF4.model.Etudiant" update="false" insert="false" fetch="select">
+            <column name="cinetud1" not-null="true" />
+        </many-to-one>
+        <property name="numChoix" type="int">
+            <column name="num_choix" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
