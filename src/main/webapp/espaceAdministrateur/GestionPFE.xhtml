@@ -14,15 +14,18 @@
             <ui:define name="center">
                  <p:growl id="messages" autoUpdate="true" showDetail="true" /> 
                 <h:form id="PfeListForm" style=" margin-left: 210px; margin-right: auto;">
-                    <p:panel header="Projet de fin d'etude">
+                    <p:panel>
+                        <f:facet name="header" >
+                            <p:outputLabel value="Projet de fin d'etude" style="color: red;" />
+                        </f:facet>
                     <p:dataTable id="datalist" value="#{pfeControleur.pfes}" var="pfe"
                                  selectionMode="single" selection="#{pfeControleur.selected}"
                                  paginator="true"
                                  rowKey="#{pfe.codepfe}"
                                  rows="10">
                         
-                        <p:ajax event="rowSelect"   update="createButton editButton deleteButton"/>
-                        <p:ajax event="rowUnselect" update="createButton editButton deleteButton"/>
+                        <p:ajax event="rowSelect"   update="createButton detailButton editButton deleteButton"/>
+                        <p:ajax event="rowUnselect" update="createButton detailButton editButton deleteButton"/>
 
                         <p:column  filterBy="#{pfe.nomprojet}">
                             <f:facet name="header">
@@ -31,18 +34,28 @@
                             <h:outputText value="#{pfe.nomprojet}"/>
                         </p:column>
                         
-                        <p:column filterBy="#{pfe.langageprog}" >
+                        <p:column filterBy="#{pfe.etudiantByEtuCin.cinetu}">
                             <f:facet name="header">
-                                <h:outputText value="Language de programmation"/>
+                                <h:outputText value="CIN Etudiant 1"/>
                             </f:facet>
-                            <h:outputText value="#{pfe.langageprog}"/>
+                            <p:outputLabel value="#{pfe.etudiantByEtuCin.cinetu}" />
                         </p:column>
+                        
                         <p:column filterBy="#{pfe.etudiantByEtuCin.nomPrenom}">
                             <f:facet name="header">
                                 <h:outputText value="Etudiant 1"/>
                             </f:facet>
                             <h:outputText value="#{pfe.etudiantByEtuCin.nomPrenom}"/>
                         </p:column>
+                        
+                        <p:column filterBy="#{pfe.etudiantByEtuCin1.cinetu}">
+                            <f:facet name="header">
+                                <h:outputText value="CIN Etudiant 2"/>
+                            </f:facet>
+                            <p:outputLabel rendered="#{pfe.etudiantByEtuCin1 ne null}"
+                                           value="#{pfe.etudiantByEtuCin1.cinetu}" />
+                        </p:column>
+                        
                         <p:column filterBy="#{pfe.etudiantByEtuCin1.nomPrenom}">
                             <f:facet name="header">
                                 <h:outputText value="Etudiant 2"/>
@@ -50,26 +63,27 @@
                             <h:outputText value="#{pfe.etudiantByEtuCin1.nomPrenom}" 
                                           rendered="#{pfe.etudiantByEtuCin1 ne null}"/>
                         </p:column>
+                        <p:column filterBy="#{pfe.encadreur.cinEnseignant}">
+                            <f:facet name="header">
+                                <h:outputText value="CIN Encadreur"/>
+                            </f:facet>
+                            <h:outputText value="#{pfe.encadreur.cinEnseignant}"/>
+                        </p:column>
                         <p:column filterBy="#{pfe.encadreur.prenom}">
                             <f:facet name="header">
                                 <h:outputText value="Encadreur"/>
                             </f:facet>
                             <h:outputText value="#{pfe.encadreur.prenom} #{pfe.encadreur.nom}"/>
                         </p:column>
-                        <p:column filterBy="#{pfe.section.section}">
+                        <p:column filterBy="#{pfe.section.section}" sortBy="#{pfe.section.section}">
                             <f:facet name="header">
                                 <h:outputText value="Section"/>
                             </f:facet>
                             <h:outputText value="#{pfe.section.section}"/>
                         </p:column>
-                        <p:column filterBy="#{pfe.specialite.specialite}">
-                            <f:facet name="header">
-                                <h:outputText value="Specialite"/>
-                            </f:facet>
-                            <h:outputText value="#{pfe.specialite.specialite}"/>
-                        </p:column>
                         <f:facet name="header">
                             <p:commandButton id="createButton" icon="ui-icon-plus"   value="Ajouter" actionListener="#{pfeControleur.prepareCreate}" update=":PfeCreateForm" oncomplete="PF('PfeCreateDialog').show()"/>
+                            <p:commandButton id="detailButton"   icon="ui-icon-search" value="Detail" update=":PfeDetailForm" oncomplete="PF('PfeDetailDialog').show()" disabled="#{empty pfeControleur.selected}"/>
                             <p:commandButton id="editButton"   icon="ui-icon-pencil" value="Modifier" update=":PfeEditForm" oncomplete="PF('PfeEditDialog').show()" disabled="#{empty pfeControleur.selected}"/>
                             <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="Supprimer" actionListener="#{pfeControleur.supprimer}" update="datalist" disabled="#{empty pfeControleur.selected}"/>
                         </f:facet>
@@ -138,14 +152,14 @@
             </h:form>      
         </p:dialog>
                 <p:dialog id="PfeEditDlg" widgetVar="PfeEditDialog" modal="true" resizable="false" 
-                          appendTo="@(body)" header="#{bundle.EditPfeTitle}" dynamic="true">
+                          appendTo="@(body)"  dynamic="true">
             <h:form id="PfeEditForm">
                 <p:fieldset legend="Information">
                 <h:panelGroup id="display">
                     <p:panelGrid columns="2" >       
                         <p:outputLabel value="Nom projet" for="nomprojet" />
                         <p:inputText id="nomprojet" value="#{pfeControleur.selected.nomprojet}" required="true" requiredMessage="saisie le nom de projet"/>
-                        <p:outputLabel value="description" for="description" />
+                        <p:outputLabel value="Description" for="description" />
                         <p:inputTextarea rows="4" cols="30" id="description" value="#{pfeControleur.selected.description}"/>
                         <p:outputLabel value="Methode de conception" for="methodeconception" />
                         <p:inputText id="methodeconception" value="#{pfeControleur.selected.methodeconception}"/>
@@ -191,11 +205,57 @@
                     <div style="text-align: center">
                     <p:commandButton  type="submit"  actionListener="#{pfeControleur.modifier}" value="modifier" update="display,:PfeListForm:datalist"
                                      oncomplete="PfeEditDialog.hide()"/>
-                    <p:commandButton immediate="true" value="annuler" onclick="PfeEditDialog.hide()"/></div>
+                    <p:commandButton immediate="true" value="annuler" oncomplete="PF('PfeEditDialog').hide()" /></div>
                 </h:panelGroup>
                 </p:fieldset>
             </h:form>
         </p:dialog>
+                 <p:dialog id="PfeDetailDlg" widgetVar="PfeDetailDialog" modal="true" resizable="false"
+                           appendTo="@(body)"  dynamic="true" closable="false" draggable="false" >
+                     <h:form id="PfeDetailForm">
+                         <p:fieldset legend="Information">
+                             <h:panelGrid columns="2" >
+                                 <p:outputLabel value="Code :" />
+                                 <p:outputLabel value="#{pfeControleur.selected.codepfe}" />
+                                 <p:outputLabel value="Nom projet :"  />
+                                 <p:outputLabel value="#{pfeControleur.selected.nomprojet}" />
+                                 <p:outputLabel value="Description :" />
+                                 <p:outputLabel value="#{pfeControleur.selected.description}" />
+                                 <p:outputLabel value="Methode de conception :"/>
+                                 <p:outputLabel value="#{pfeControleur.selected.methodeconception}" />
+                                 <p:outputLabel value="Langage de Programmation :" />
+                                 <p:outputLabel value="#{pfeControleur.selected.langageprog}" />
+                                 <p:outputLabel value="CIN Etudiant 1 :"/>
+                                 <p:outputLabel value="#{pfeControleur.selected.etudiantByEtuCin.cinetu}" />
+                                 <p:outputLabel value="Etudiant 1 :"/>
+                                 <p:outputLabel value="#{pfeControleur.selected.etudiantByEtuCin.nomPrenom}" />
+                                 <p:outputLabel value="CIN Etudiant 2 :"/>
+                                 <p:column>
+                                     <p:outputLabel value="Non définie"
+                                                rendered="#{pfeControleur.selected.etudiantByEtuCin1 eq null}"/>
+                                     <p:outputLabel value="#{pfeControleur.selected.etudiantByEtuCin1.cinetu}"
+                                                rendered="#{pfeControleur.selected.etudiantByEtuCin1 ne null}"/>                                 
+                                 </p:column>
+                                 <p:outputLabel value="Etudiant 2 :"/>
+                                 <p:column>
+                                     <p:outputLabel value="Non définie"
+                                                rendered="#{pfeControleur.selected.etudiantByEtuCin1 eq null}"/>
+                                     <p:outputLabel value="#{pfeControleur.selected.etudiantByEtuCin1.nomPrenom}"
+                                                    rendered="#{pfeControleur.selected.etudiantByEtuCin1 ne null}" />
+                                 </p:column>
+                                 <p:outputLabel value="Encadreur :" />
+                                 <p:outputLabel value="#{pfeControleur.selected.encadreur.prenom} #{pfeControleur.selected.encadreur.nom}" />
+                                 <p:outputLabel value="Section :" />
+                                 <p:outputLabel value="#{pfeControleur.selected.section.section}" />
+                                 <p:outputLabel value="Specialite" />
+                                 <p:outputLabel value="#{pfeControleur.selected.specialite.specialite}" />                                 
+                             </h:panelGrid> 
+                             <div style="text-align: center">
+                                 <p:commandButton  value="Quitter" oncomplete="PF('PfeDetailDialog').hide()"/>
+                             </div>
+                         </p:fieldset>
+                     </h:form> 
+                 </p:dialog>
             </ui:define>         
         </ui:composition>
     </h:body>
