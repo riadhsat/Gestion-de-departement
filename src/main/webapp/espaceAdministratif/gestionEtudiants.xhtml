@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administratif.xhtml">
+            <ui:define name="title">
+                Gestion des Etudiants
+            </ui:define>
+            <ui:define name="center">
+
+                <h:form id="form">
+                    <p:growl showDetail="true" autoUpdate="true" life="2000" id="growl"/>
+                    <p:commandButton style="float: right;" icon="ui-icon-plusthick"
+                                     actionListener="#{etudiantControleur.ajouter}" value="Ajouter Etudiant"/>
+
+                    <p:dataTable var="etudiant" value="#{etudiantControleur.etudiants}"
+                                 rowKey="#{etudiant.cinetu}" paginator="true" rows="10"
+                                 id="table_etudiants" emptyMessage="Aucun etudiant"
+                                 selectionMode="single" editable="true"
+                                 filteredValue="#{etudiantControleur.filtredEtudiants}">
+
+                        <p:ajax event="rowEdit" listener="#{etudiantControleur.update}" update=":form:growl :form:table_etudiants" />
+                        <p:ajax event="rowEditCancel" listener="#{etudiantControleur.cancelUpdate}" update=":form:growl" />
+
+                        <f:facet name="header">
+                            Liste des Etudiants
+                        </f:facet>
+
+                        <!--Le champ du CIN (cle primaire) ne doit pas etre mis a jour-->
+                        <p:column headerText="CIN" filterBy="cinetu" sortBy="cinetu">
+                            <h:outputText value="#{etudiant.cinetu}"/>
+                        </p:column>
+                        <p:column headerText="N°Inscription" filterBy="ins">
+                            <h:outputText value="#{etudiant.ins}"/>
+                        </p:column>
+
+                        <p:column headerText="Nom et Prénom" filterBy="nomPrenom">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{etudiant.nomPrenom}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText id="nom_ed" value="#{etudiant.nomPrenom}" validatorMessage="Nom et prénom Invalides">
+                                        <f:validateRegex pattern="[a-zA-Z ]*" for="nom_ed"/>
+                                        <f:validateLength minimum="2" for="nom_ed"/>
+                                        <p:ajax update="msgnp" event="keyup" />
+                                    </p:inputText>
+                                    <p:message for="nom_ed" id="msgnp"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Date de naissance" filterBy="datenaissance">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{etudiant.datenaissance}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:calendar locale="fr" value="#{etudiant.datenaissance}"
+                                                navigator="true" id="datenais_ed"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Mail" filterBy="mail">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{etudiant.mail}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText id="mail_ed" value="#{etudiant.mail}" validatorMessage="Entrer une adresse mail valide">
+                                        <f:validateRegex pattern="[a-zA-Z][a-zA-Z0-9_\\.]*@[a-zA-Z]+\\.[a-zA-Z]{2,4}" for="mail_ed"/>
+                                        <p:ajax update="msgMail" event="keyup" />
+                                    </p:inputText>
+                                    <p:message for="mail_ed" id="msgMail"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Section" filterBy="section">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{etudiant.section.section}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu id="section" value="#{etudiant.section}" converter="genericConverter">
+                                        <f:selectItems var="section" value="#{sectionControleur.sections}"
+                                                       itemLabel="#{section.section}" itemValue="#{section}" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Spécialite" filterBy="specialite">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{etudiant.specialite.specialite}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu id="specialite" value="#{etudiant.specialite.specialite}" converter="genericConverter">
+                                        <f:selectItems var="specialite" value="#{specialiteControleur.specialites}"
+                                                       itemLabel="#{specialite.specialite}" itemValue="#{specialite}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="width: 6%;">
+                            <p:rowEditor/>
+                        </p:column>
+                        <p:column style="width: 6%;">
+                            <p:commandButton icon="ui-icon-trash" actionListener="#{enseignantControleur.supprimer(etudiant)}" update=":form:growl :form:table_etudiants"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

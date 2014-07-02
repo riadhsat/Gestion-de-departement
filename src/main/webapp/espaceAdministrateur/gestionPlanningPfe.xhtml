@@ -1,0 +1,548 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administrateur.xhtml">
+            <ui:define name="script">
+                <h:outputScript library="js" name="script.js" target="head"/>
+            </ui:define>
+            <ui:define name="title">
+                Planning des projets de fin d'études
+            </ui:define>
+
+            <ui:define name="center" id="def_center">
+
+                <h:outputScript library="js" name="script.js" target="head"/>
+                <p:growl id="messages" autoUpdate="true" showDetail="true" />
+                <h:form id="calendrier" style=" margin-left: 210px;">                    
+                    <p:panel header="Planning des projets de fin d'études" >
+                        
+                        <h:panelGrid columns="4" cellpadding="10" style="width: 700px;margin: auto;">
+                            <p:outputLabel for="select_salle" value="Planning par Salle"/>
+                             <p:selectOneMenu id="select_salle" value="#{planningPFEcontroleur.selectedSalle}"
+                                             converter="genericConverter" style="width: 150px">
+                                <f:ajax  render="@form"/>
+                                <f:selectItem itemLabel="Toute Salle" itemValue="#{null}"/>
+                                <f:selectItems var="salle" value="#{salleControleur.salles}"
+                                               itemLabel="#{salle.salle}" itemValue="#{salle}"/>
+                                <p:ajax update="schedule"                                           
+                                        listener="#{planningPFEcontroleur.mettreAJourCalander}"
+                                        onstart="PF('blockUIWidget').block()"
+                                        oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:selectOneMenu> 
+                            <p:outputLabel for="select_section" value="Planning par Section :"/>
+                            <p:selectOneMenu id="select_section" value="#{planningPFEcontroleur.selectedSection}"
+                                             converter="genericConverter" style="width: 150px">
+                                <f:ajax  render="@form"/>
+                                <f:selectItem itemLabel="Toute Section" itemValue="#{null}"/>
+                                <f:selectItems var="section" value="#{planningPFEcontroleur.sectionTerminal}"
+                                               itemLabel="#{section.section}" itemValue="#{section}"/>
+                                <p:ajax update="schedule :form_projets:pan_projets"                                           
+                                        listener="#{planningPFEcontroleur.updateCalendar}"
+                                        onstart="PF('blockUIWidget').block()"
+                                        oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:selectOneMenu>                            
+                        </h:panelGrid>
+
+                        <p:schedule id="schedule" value="#{planningPFEcontroleur.eventModel}"
+                                    widgetVar="myschedule" locale="fr" view="agendaWeek"
+                                    maxTime="19:00" minTime="8:00" leftHeaderTemplate="prev,next"
+                                    rightHeaderTemplate="today" aspectRatio="0.3"
+                                    slotMinutes="60" axisFormat="HH:mm" allDaySlot="false"
+                                     resizable="false" draggable="false">
+                            <p:ajax event="eventSelect" listener="#{planningPFEcontroleur.onEventSelect}"  update=":dialog"
+                                     onstart="PF('blockUIWidget').block()" oncomplete="PF('dlg').show();PF('blockUIWidget').unblock()"/>
+                        </p:schedule>
+
+                    </p:panel>
+
+                </h:form>
+
+                <h:form id="form_projets">
+                    <p:outputLabel value="Recherche :"/>
+                    <p:inputText value="#{planningPFEcontroleur.nomAchercher}" >
+                        <p:ajax event="keyup" listener="#{planningPFEcontroleur.afficherNonPlanifies}" 
+                                update="pan_projets" onstart="PF('blockUIWidget').block()" 
+                                oncomplete="PF('blockUIWidget').unblock()"/>
+                    </p:inputText>
+
+                    <p:selectManyCheckbox id="filtre_projets" value="#{planningPFEcontroleur.filtreListNonplanifier}"
+                                          layout="grid" columns="2">
+                        <f:selectItem itemLabel="Sans Président" itemValue="1"/>
+                        <f:selectItem itemLabel="Sans Rapporteur" itemValue="2"/>
+                        <p:ajax update=":messages pan_projets" listener="#{planningPFEcontroleur.afficherNonPlanifies}" 
+                                onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                    </p:selectManyCheckbox>
+
+                    <p:dataGrid paginator="true" lazy="true" id="pan_projets"
+                                var="projet" value="#{planningPFEcontroleur.toutProjetNonPlanifierChercher}"
+                                paginatorPosition="top" rows="3"
+                                emptyMessage="Pas de projets" columns="1" 
+                                paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}">
+                        <p:column>
+                            <p:panel  style="width: 280px" 
+                                     header="#{projet.codepfe}- #{projet.nomprojet}" >
+                                <h:outputText value="#{projet.description}"/>
+                                <div>
+                                    <p:commandButton immediate="true"  update=":newPplanifier" value="planifier"
+                                               title="Détails du projet" onstart="PF('blockUIWidget').block()" 
+                                               oncomplete="PF('dlgnplani').show();PF('blockUIWidget').unblock()">                                    
+                                    <f:setPropertyActionListener value="#{projet}"
+                                                                 target="#{planningPFEcontroleur.selectedPfe}" />
+                                </p:commandButton>                               
+                                <p:commandButton immediate="true" update=":affectenseignant" value="+enseignant"
+                                               title="Détails du projet" 
+                                               onstart="PF('blockUIWidget').block()" 
+                                               oncomplete="PF('dlgaffen').show();PF('blockUIWidget').unblock()">                                    
+                                    <f:setPropertyActionListener value="#{projet}"
+                                                                 target="#{planningPFEcontroleur.selectedPfe}" />
+                                </p:commandButton>
+                                  <p:commandButton immediate="true" update=":dialog" value="Detail"
+                                               title="Détails du projet" 
+                                               onstart="PF('blockUIWidget').block()" 
+                                               oncomplete="PF('dlg').show();PF('blockUIWidget').unblock()">                                    
+                                    <f:setPropertyActionListener value="#{projet}"
+                                                                 target="#{planningPFEcontroleur.selectedPfe}" />
+                                </p:commandButton>
+                                    </div>
+                            </p:panel>
+                        </p:column>
+                    </p:dataGrid>
+                </h:form>               
+                <p:dialog id="affectenseignant" widgetVar="dlgaffen" draggable="false" closable="false"
+                          header="affecte ou modifier enseignant" modal="true" appendTo="@(body)" 
+                          onShow="#{planningPFEcontroleur.initeliminerEnseignant()}"
+                          width="500"  height="300"  resizable="false" dynamic="true">
+                   
+                    <h:form>
+                        <p:wizard flowListener="#{planningPFEcontroleur.affectenseignant}" 
+                                  widgetVar="wiz" backLabel="Retour" nextLabel="Suivant" >
+                            <p:tab id="President" title="President">
+                                <br/>
+                                <br/>
+                                <p:fieldset legend="Information">
+                                <h:panelGrid columns="2" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                <p:outputLabel value="President :"/>
+                                <p:inplace>
+                                    <f:facet name="output"> 
+                                        <h:outputText id="presijurynull" value="non affecté" rendered="#{planningPFEcontroleur.selectedPfe.chefjury eq null}"/>
+                                        <h:outputText id="presijury" rendered="#{planningPFEcontroleur.selectedPfe.chefjury ne null}"  
+                                                      value="#{planningPFEcontroleur.selectedPfe.chefjury.nom}"/>
+                                    </f:facet>
+                                    <f:facet name="input" >
+                                        <p:selectOneMenu id="presijuryinput" label="President" value="#{planningPFEcontroleur.selectedPfe.chefjury}"
+                                                         converter="genericConverter" style="width: 130px">
+                                            <f:selectItem itemLabel="non affecte" itemValue="#{null}"/>
+                                            <f:selectItems var="ensei" value="#{planningPFEcontroleur.filtreenseignants}"
+                                                           itemLabel="#{ensei.nom}" itemValue="#{ensei}"/>
+                                            <f:ajax  render="@form"/>
+                                        </p:selectOneMenu>
+                                    </f:facet>
+                                </p:inplace>
+                                </h:panelGrid>
+                                    <div style="text-align: center">            
+                            <p:commandButton immediate="true" actionListener="#{planningPFEcontroleur.annulerenseignant}" 
+                                value="Quitter" oncomplete="PF('dlgaffen').hide();PF('wiz').loadStep (PF('wiz').cfg.steps [0], true)"/>
+                           </div>         
+                                </p:fieldset>
+                            </p:tab>
+                             <p:tab id="Rapporteur" title="Rapporteur">
+                                 <br/>
+                                <br/>
+                                <p:fieldset legend="Information">
+                                 <h:panelGrid columns="2" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                <p:outputLabel value="Rapporteur"/>
+                                <p:inplace>
+                                    <f:facet name="output"> 
+                                        <h:outputText id="rapporteurnull" value="non affecté" 
+                                                      rendered="#{planningPFEcontroleur.selectedPfe.rapporteur eq null}"/>
+                                        <h:outputText id="rapporteur" rendered="#{planningPFEcontroleur.selectedPfe.rapporteur ne null}"  
+                                                      value="#{planningPFEcontroleur.selectedPfe.rapporteur.nom}"/>
+                                    </f:facet>
+                                    <f:facet name="input" >
+                                        <p:selectOneMenu id="rapporteurinput" label="Rapporteur" 
+                                                         value="#{planningPFEcontroleur.selectedPfe.rapporteur}"
+                                                         converter="genericConverter" style="width: 130px">
+                                            <f:selectItem itemLabel="non affecte" itemValue="#{null}"/>
+                                            <f:selectItems var="ensei" value="#{planningPFEcontroleur.filtreenseignants}"
+                                                           itemLabel="#{ensei.nom}" itemValue="#{ensei}"/>
+                                            <f:ajax  render="@form"/>
+                                        </p:selectOneMenu>
+                                    </f:facet>
+                                </p:inplace> 
+                                </h:panelGrid>
+                                    <div style="text-align: center">            
+                            <p:commandButton immediate="true" actionListener="#{planningPFEcontroleur.annulerenseignant}" 
+                                value="Quitter" oncomplete="PF('dlgaffen').hide();PF('wiz').loadStep (wiz.cfg.steps [0], true)"/>
+                           </div>         
+                                    </p:fieldset>
+                            </p:tab>
+                            <p:tab id="Confirmation" title="Confirmation">
+                                <br/>
+                                <br/>
+                                <p:fieldset legend="Information">
+                                <h:panelGrid columns="2" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                <p:outputLabel value="President :    " />
+                                <h:outputText id="presidantnull" value="non affecté" rendered="#{planningPFEcontroleur.selectedPfe.chefjury eq null}"/>
+                                <h:outputText id="presidant" rendered="#{planningPFEcontroleur.selectedPfe.chefjury ne null}"  
+                                                      value="#{planningPFEcontroleur.selectedPfe.chefjury.prenom} #{planningPFEcontroleur.selectedPfe.chefjury.nom}"/>
+                                
+                                <p:outputLabel value="Rapporteur :    "/>
+                                <h:outputText id="rapportnull" value="non affecté" 
+                                                      rendered="#{planningPFEcontroleur.selectedPfe.rapporteur eq null}"/>
+                                <h:outputText id="rapport" rendered="#{planningPFEcontroleur.selectedPfe.rapporteur ne null}"  
+                                              value="#{planningPFEcontroleur.selectedPfe.rapporteur.prenom} #{planningPFEcontroleur.selectedPfe.rapporteur.nom}"/>                                
+                                </h:panelGrid>
+                             <div style="text-align: center">
+                             <p:commandButton actionListener="#{planningPFEcontroleur.modifenseignant}" 
+                                                 value="Enregistrer" oncomplete="PF('dlgaffen').hide();PF('wiz').loadStep (PF('wiz').cfg.steps [0], true)"/>
+                            <p:commandButton immediate="true" actionListener="#{planningPFEcontroleur.annulerenseignant}" 
+                                value="Quitter" oncomplete="PF('dlgaffen').hide();PF('wiz').loadStep (PF('wiz').cfg.steps [0], true)"/>
+                           </div>                               
+                              </p:fieldset>
+                            </p:tab>                             
+                        </p:wizard> 
+                    </h:form>                                                
+                </p:dialog>
+                <p:dialog id="newPplanifier" dynamic="true" widgetVar="dlgnplani" draggable="false"
+                          closable="false" header="Planification de projet" modal="true" appendTo="@(body)"                           
+                          width="710"  height="245"  resizable="false" >
+                    <h:form>
+                        <p:wizard backLabel="Retour" nextLabel="Suivant"  flowListener="#{planningPFEcontroleur.newplanifierprojet}"
+                                  widgetVar="wiznewplani">
+                            <p:tab id="Date" title="Date">                                
+                                <h:panelGrid columns="2" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                <p:outputLabel value="Date soutenance"/>
+                                
+                                <p:calendar id="date_soutenance" locale="fr" disabledWeekends="true" pattern="dd/MM/yyyy"
+                                            value="#{planningPFEcontroleur.selectedPfe.datesoutenance}" required="true" 
+                                            requiredMessage="date doit etre non vide">
+                                    
+                                </p:calendar>
+                                <p:outputLabel for="heure_soutenance" value="Heure soutenance"/>
+                                <pe:timePicker id="heure_soutenance" value="#{planningPFEcontroleur.heure_soutenance}" 
+                                               locale="fr" required="true" requiredMessage="l'heure doit etre non vide"
+                                               mode="popup" startHours="8" endHours="16" intervalMinutes="15" rows="2">
+                                </pe:timePicker>
+
+                                <p:outputLabel for="duree_soutenance" value="Durée (Heures)"/>
+                                <p:selectOneMenu id="duree_soutenance" 
+                                                 value="#{planningPFEcontroleur.selectedPfe.dureesoutenance}">
+                                    <f:selectItem itemLabel="01:00" itemValue="01:00"/>
+                                    <f:selectItem itemLabel="01:30" itemValue="01:30"/>
+                                    <f:selectItem itemLabel="02:00" itemValue="02:00"/>                                    
+                                </p:selectOneMenu>
+                                </h:panelGrid>
+                                
+                            </p:tab>
+                            <p:tab id="Salle" title="Salle">
+                                <br/>
+                                <br/>                                
+                                <h:panelGrid columns="2" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                    
+                                 <p:outputLabel for="salle" value="Salle"/>
+                                <p:selectOneMenu id="salle" label="Salle" value="#{planningPFEcontroleur.selectedPfe.salle}"
+                                                 required="true" requiredMessage="Salle doit etre non vide"
+                                                         converter="genericConverter" style="width: 130px">
+                                            <f:selectItem itemLabel="Aucune Salle" itemValue="#{null}"/>
+                                            <f:selectItems var="s" value="#{planningPFEcontroleur.filtreSalle}"
+                                                           itemLabel="#{s.salle}" itemValue="#{s}"/>
+                                        </p:selectOneMenu>
+                                 </h:panelGrid>
+                            </p:tab>
+                            <p:tab id="President" title="President">
+                                <br/>
+                                <br/>
+                                <h:panelGrid columns="2" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                <p:outputLabel for="President" value="President :"/>
+                                <p:selectOneMenu id="president" label="President" value="#{planningPFEcontroleur.selectedPfe.chefjury}"
+                                            required="true" requiredMessage="Président non affecté" converter="genericConverter" style="width: 130px">                                    
+                                            <f:selectItems var="ensei" value="#{planningPFEcontroleur.filtreenseignants}"
+                                                           itemLabel="#{ensei.prenom} #{ensei.nom}" itemValue="#{ensei}"/>
+                                        </p:selectOneMenu>                               
+                                </h:panelGrid>
+                            </p:tab>
+                            <p:tab id="Rapporteur" title="Rapporteur">
+                                <br/>
+                                <br/>
+                                <h:panelGrid columns="2" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                <p:outputLabel for="Rapporteur" value="Rapporteur :"/>
+                                <p:selectOneMenu id="rapporteur" label="Rapporteur" 
+                                              value="#{planningPFEcontroleur.selectedPfe.rapporteur}"
+                                              required="true" requiredMessage="rapporteur non affecté" converter="genericConverter" style="width: 130px">
+                                            <f:selectItem itemLabel="non affecte" itemValue="#{null}"/>
+                                            <f:selectItems var="ensei" value="#{planningPFEcontroleur.filtreenseignants}"
+                                                           itemLabel="#{ensei.prenom} #{ensei.nom}" itemValue="#{ensei}"/>
+                                </p:selectOneMenu>
+                                </h:panelGrid>
+                            </p:tab> 
+                            <p:tab id="Confirmation" title="Confirmation">
+                                <br/>
+                                <br/>
+                                <h:panelGrid columns="4" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                    <p:outputLabel value="Date soutenance :"/>
+                                    <p:outputLabel value="#{planningPFEcontroleur.selectedPfe.datesoutenance}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                    <p:outputLabel value="Heure de soutenance :"/>
+                                    <p:outputLabel value="#{planningPFEcontroleur.selectedPfe.datesoutenance}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </p:outputLabel>
+                                    <p:outputLabel value="Durée de soutenance :"/>
+                                    <p:outputLabel value="#{planningPFEcontroleur.selectedPfe.dureesoutenance}"/>
+                                    <p:outputLabel value="Salle :"/>
+                                    <p:outputLabel value="#{planningPFEcontroleur.selectedPfe.salle.salle}" />
+                                    <p:outputLabel value="President :"/>
+                                    <p:outputLabel value="#{planningPFEcontroleur.selectedPfe.chefjury.prenom} #{planningPFEcontroleur.selectedPfe.chefjury.nom}" />
+                                    <p:outputLabel value="Rapporteur :"/>
+                                    <p:outputLabel value="#{planningPFEcontroleur.selectedPfe.rapporteur.prenom} #{planningPFEcontroleur.selectedPfe.rapporteur.nom}" />
+                                    
+                                </h:panelGrid>
+                                <div style="text-align: center">
+                                <p:commandButton immediate="true"  value="Enregister" onstart="PF('blockUIWidget').block()"
+                                                 update=":form_projets:pan_projets :calendrier:schedule" actionListener="#{planningPFEcontroleur.enregistrer}"
+                                          oncomplete="PF('dlgnplani').hide();PF('wiznewplani').loadStep (PF('wiznewplani').cfg.steps [0], true);PF('blockUIWidget').unblock()">
+                                     <f:setPropertyActionListener value="#{true}"
+                                                          target="#{planningPFEcontroleur.enregisAnnuler}" />                            
+                                </p:commandButton>
+                              </div>
+                            </p:tab>                            
+                        </p:wizard> 
+                        <div style="text-align: center">
+                        <h:form>
+                             <p:commandButton immediate="true"  value="Quitter" onstart="PF('blockUIWidget').block()"
+                                         actionListener="#{planningPFEcontroleur.annulerenseignant}" update=":form_projets:pan_projets"
+                                         oncomplete="PF('dlgnplani').hide();PF('wiznewplani').loadStep (PF('wiznewplani').cfg.steps [0], true);PF('blockUIWidget').unblock()">
+                             <f:setPropertyActionListener value="#{false}"
+                                                          target="#{planningPFEcontroleur.enregisAnnuler}" />
+                             </p:commandButton>
+                        </h:form>   
+                    </div>
+                    </h:form> 
+                    
+                </p:dialog> 
+                <p:dialog id="editPplanifier" dynamic="true" widgetVar="dlgeditpro" draggable="false"
+                          closable="false"
+                          header="Planification de projet" modal="true" appendTo="@(body)"                           
+                          width="710"  height="300"  resizable="false" >
+                    <h:form>
+                        <p:wizard backLabel="Retour" nextLabel="Suivant"  flowListener="#{planningPFEcontroleur.editplanifierprojet}"
+                                  widgetVar="wizeditplani">
+                            <p:tab id="Date" title="Date">
+                                <br/>
+                                <br/>
+                                <h:panelGrid columns="2" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                <p:outputLabel value="Date soutenance"/>
+                                
+                                <p:calendar id="date_soutenance" locale="fr" disabledWeekends="true" pattern="dd/MM/yyyy"
+                                            value="#{planningPFEcontroleur.selectedPfe.datesoutenance}" required="true" 
+                                            requiredMessage="date doit etre non vide">
+                                    
+                                </p:calendar>
+                                <p:outputLabel for="heure_soutenance" value="Heure soutenance"/>
+                                <pe:timePicker id="heure_soutenance" value="#{planningPFEcontroleur.heure_soutenance}" 
+                                               locale="fr" required="true" requiredMessage="l'heure doit etre non vide"
+                                               mode="popup" startHours="8" endHours="16" intervalMinutes="15" rows="2">
+                                </pe:timePicker>
+
+                                <p:outputLabel for="duree_soutenance" value="Durée (Heures)"/>
+                                <p:selectOneMenu id="duree_soutenance" 
+                                                 value="#{planningPFEcontroleur.selectedPfe.dureesoutenance}">
+                                    <f:selectItem itemLabel="01:00" itemValue="01:00"/>
+                                    <f:selectItem itemLabel="01:30" itemValue="01:30"/>
+                                    <f:selectItem itemLabel="02:00" itemValue="02:00"/>                                    
+                                </p:selectOneMenu>
+                                </h:panelGrid>
+                                
+                            </p:tab>
+                            <p:tab id="Salle" title="Salle">
+                                 <br/>
+                                <br/>                                
+                                <h:panelGrid columns="2" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                    
+                                 <p:outputLabel for="salle" value="Salle"/>
+                                <p:selectOneMenu id="salle" label="Salle" value="#{planningPFEcontroleur.selectedPfe.salle}"
+                                                 required="true" requiredMessage="Salle doit etre non vide"
+                                                         converter="genericConverter" style="width: 130px">                                            
+                                            <f:selectItems var="s" value="#{planningPFEcontroleur.filtreSalle}"
+                                                           itemLabel="#{s.salle}" itemValue="#{s}"/>
+                                        </p:selectOneMenu>
+                                 </h:panelGrid>
+                            </p:tab>
+                            <p:tab id="President" title="President">
+                                <br/>
+                                <br/>
+                                <h:panelGrid columns="2" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                <p:outputLabel for="President" value="President :"/>
+                                <p:selectOneMenu id="president" label="President" value="#{planningPFEcontroleur.selectedPfe.chefjury}"
+                                            required="true" requiredMessage="Président non affecté" converter="genericConverter" style="width: 130px">                                    
+                                            <f:selectItems var="ensei" value="#{planningPFEcontroleur.filtreenseignants}"
+                                                           itemLabel="#{ensei.prenom} #{ensei.nom}" itemValue="#{ensei}"/>
+                                        </p:selectOneMenu>                               
+                                </h:panelGrid>
+                            </p:tab>
+                            <p:tab id="Rapporteur" title="Rapporteur">
+                                <br/>
+                                <br/>
+                                <h:panelGrid columns="2" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                <p:outputLabel for="Rapporteur" value="Rapporteur :"/>
+                                <p:selectOneMenu id="rapporteur" label="Rapporteur" 
+                                              value="#{planningPFEcontroleur.selectedPfe.rapporteur}"
+                                              required="true" requiredMessage="rapporteur non affecté" converter="genericConverter" style="width: 130px">
+                                            <f:selectItems var="ensei" value="#{planningPFEcontroleur.filtreenseignants}"
+                                                           itemLabel="#{ensei.prenom} #{ensei.nom}" itemValue="#{ensei}"/>
+                                </p:selectOneMenu>
+                                </h:panelGrid>
+                                
+                            </p:tab> 
+                            <p:tab id="Confirmation" title="Confirmation">
+                                <br/>
+                                <br/>
+                                <h:panelGrid columns="4" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                    <p:outputLabel value="Date soutenance :"/>
+                                    <p:outputLabel value="#{planningPFEcontroleur.selectedPfe.datesoutenance}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                    <p:outputLabel value="Heure de soutenance :"/>
+                                    <p:outputLabel value="#{planningPFEcontroleur.selectedPfe.datesoutenance}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </p:outputLabel>
+                                    <p:outputLabel value="Durée de soutenance :"/>
+                                    <p:outputLabel value="#{planningPFEcontroleur.selectedPfe.dureesoutenance}"/>
+                                    <p:outputLabel value="Salle :"/>
+                                    <p:outputLabel value="#{planningPFEcontroleur.selectedPfe.salle.salle}" />
+                                    <p:outputLabel value="President :"/>
+                                    <p:outputLabel value="#{planningPFEcontroleur.selectedPfe.chefjury.prenom} #{planningPFEcontroleur.selectedPfe.chefjury.nom}" />
+                                    <p:outputLabel value="Rapporteur :"/>
+                                    <p:outputLabel value="#{planningPFEcontroleur.selectedPfe.rapporteur.prenom} #{planningPFEcontroleur.selectedPfe.rapporteur.nom}" />
+                                 </h:panelGrid> 
+                                <div style="text-align: center">
+                                <p:commandButton immediate="true"  value="Enregister" onstart="PF('blockUIWidget').block()"
+                                                 update=":calendrier:schedule" actionListener="#{planningPFEcontroleur.enregistrer}"
+                                          oncomplete="PF('dlgeditpro').hide();PF('wizeditplani').loadStep (PF('wizeditplani').cfg.steps [0], true);PF('blockUIWidget').unblock()">
+                                     <f:setPropertyActionListener value="#{true}"
+                                                          target="#{planningPFEcontroleur.enregisAnnuler}" />                            
+                                </p:commandButton>
+                              </div>
+                            </p:tab>                        
+                        </p:wizard>
+                        <div style="text-align: center">
+                        <h:form>
+                             <p:commandButton immediate="true"  value="Quitter" onstart="PF('blockUIWidget').block()"
+                                              actionListener="#{planningPFEcontroleur.updateCalendar}" update=":calendrier:schedule"
+                                         oncomplete="PF('dlgeditpro').hide();PF('wizeditplani').loadStep (PF('wizeditplani').cfg.steps [0], true);PF('blockUIWidget').unblock()">
+                             <f:setPropertyActionListener value="#{false}"
+                                                          target="#{planningPFEcontroleur.enregisAnnuler}" />
+                             </p:commandButton>
+                        </h:form>   
+                    </div>
+                    </h:form>              
+                </p:dialog>
+                <p:dialog id="dialog" header="Détails du projet" modal="true" resizable="false"
+                           appendTo="@(body)" closeOnEscape="true" width="550" height="550"
+                          draggable="false" widgetVar="dlg" dynamic="true">
+                    <div align="center">
+                        <h:form>
+                            <p:fieldset legend="Information de Projet">
+                            <h:panelGrid columns="2" cellpadding="10" cellspacing="5" width="500px">
+                                <p:outputLabel for="nom_projet" value="Nom du projet"/>
+                                <h:outputText id="nom_projet"  value="#{planningPFEcontroleur.selectedPfe.nomprojet}"/>
+
+                                <p:outputLabel for="decription" value="Description du projet"/>
+                                <h:outputText id="decription" value="#{planningPFEcontroleur.selectedPfe.description}"/>
+
+                                <p:outputLabel value="Etudiant 1 :"/>
+                                <h:outputText value="#{planningPFEcontroleur.selectedPfe.etudiantByEtuCin.nomPrenom}"/>
+
+                                <p:outputLabel value="Etudiant 2 :"
+                                               rendered="#{planningPFEcontroleur.selectedPfe.etudiantByEtuCin1 ne null}"/>
+
+                                <p:outputLabel rendered="#{planningPFEcontroleur.selectedPfe.etudiantByEtuCin1 ne null}"
+                                              value="#{planningPFEcontroleur.selectedPfe.etudiantByEtuCin1.nomPrenom}"/>
+                                
+                                <p:outputLabel value="Encadreur :"/>                                 
+                                <p:outputLabel value="non affecté" 
+                                               rendered="#{planningPFEcontroleur.selectedPfe.encadreur eq null}"/>
+                                <p:outputLabel rendered="#{planningPFEcontroleur.selectedPfe.encadreur ne null}"  
+                                               value="#{planningPFEcontroleur.selectedPfe.encadreur.prenom} #{planningPFEcontroleur.selectedPfe.encadreur.nom}"/>
+
+                                    
+                                <p:outputLabel value="President :"/>                                 
+                                <p:outputLabel value="non affecté" 
+                                               rendered="#{planningPFEcontroleur.selectedPfe.chefjury eq null}"/>
+                                <p:outputLabel rendered="#{planningPFEcontroleur.selectedPfe.chefjury ne null}"  
+                                               value="#{planningPFEcontroleur.selectedPfe.chefjury.prenom} #{planningPFEcontroleur.selectedPfe.chefjury.nom}"/>
+                                
+                                <p:outputLabel value="Rapporteur :"/>                                 
+                                <p:outputLabel value="non affecté" 
+                                                      rendered="#{planningPFEcontroleur.selectedPfe.rapporteur eq null}"/>
+                                 <p:outputLabel rendered="#{planningPFEcontroleur.selectedPfe.rapporteur ne null}"  
+                                                      value="#{planningPFEcontroleur.selectedPfe.rapporteur.prenom} #{planningPFEcontroleur.selectedPfe.rapporteur.nom}"/>                                   
+                                                               
+                                
+                                <p:outputLabel value="Date soutenance :"/>
+                                <p:column>
+                                <p:outputLabel value="non affecté" 
+                                              rendered="#{planningPFEcontroleur.selectedPfe.datesoutenance eq null}"/>
+                                    <p:outputLabel value="#{planningPFEcontroleur.selectedPfe.datesoutenance}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:outputLabel value="Heure de soutenance :"/>
+                                <p:column>
+                                <p:outputLabel value="non affecté" 
+                                              rendered="#{planningPFEcontroleur.selectedPfe.datesoutenance eq null}"/>                                
+                                <p:outputLabel value="#{planningPFEcontroleur.selectedPfe.datesoutenance}"
+                                                   rendered="#{planningPFEcontroleur.selectedPfe.datesoutenance ne null}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                </p:outputLabel>
+                                </p:column>
+                                <p:outputLabel value="Durée (Heures)"/>
+                                <p:column>
+                                <p:outputLabel value="non affecté" 
+                                               rendered="#{planningPFEcontroleur.selectedPfe.dureesoutenance eq null}"/>
+                                <p:outputLabel value="#{planningPFEcontroleur.selectedPfe.dureesoutenance}" /> 
+                                </p:column>
+
+                                <p:outputLabel value="Salle :" />
+                                <p:column>
+                                <p:outputLabel value="non affecté" rendered="#{planningPFEcontroleur.selectedPfe.salle eq null}"/>
+                                <p:outputLabel rendered="#{planningPFEcontroleur.selectedPfe.salle ne null}"  value="#{planningPFEcontroleur.selectedPfe.salle.salle}"/>
+                                 </p:column>                              
+                            </h:panelGrid>
+                            <br/>
+                            <p:commandButton value="Modifier la planification "    update=":editPplanifier"        
+                                             onstart="PF('blockUIWidget').block()" rendered="#{planningPFEcontroleur.selectedPfe.datesoutenance ne null}"
+                                             oncomplete="PF('dlg').hide();PF('dlgeditpro').show();PF('blockUIWidget').unblock()"/>
+                            <p:commandButton value="Annuler la planification" update=":calendrier:schedule :form_projets:pan_projets"           
+                                             onstart="PF('blockUIWidget').block()" rendered="#{planningPFEcontroleur.selectedPfe.datesoutenance ne null}"
+                                             actionListener="#{planningPFEcontroleur.annulerProjet}"
+                                             oncomplete="PF('dlg').hide();PF('blockUIWidget').unblock()"/>
+                            <p:commandButton immediate="true"  update=":newPplanifier" value="Planifier"
+                                             rendered="#{planningPFEcontroleur.selectedPfe.datesoutenance eq null}"
+                                             title="planifier" onstart="PF('blockUIWidget').block()" 
+                                               oncomplete="PF('dlgnplani').show();PF('dlg').hide();PF('blockUIWidget').unblock()"/>                  
+                            <p:commandButton immediate="true" update=":affectenseignant" value="+enseignant"
+                                               title="ajouter ou modifier enseignant"
+                                               rendered="#{planningPFEcontroleur.selectedPfe.datesoutenance eq null}"
+                                               onstart="PF('blockUIWidget').block()" 
+                                               oncomplete="PF('dlgaffen').show();PF('dlg').hide();PF('blockUIWidget').unblock()"/>                  
+                            <p:commandButton value="Quitter"            
+                                             onstart="PF('blockUIWidget').block()"
+                                             oncomplete="PF('dlg').hide();PF('blockUIWidget').unblock()"/>
+                            </p:fieldset>
+                        </h:form>
+                    </div>
+                </p:dialog>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

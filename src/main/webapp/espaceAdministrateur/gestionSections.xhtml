@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administrateur.xhtml">
+            <ui:define name="title">
+                Gestion des sections
+            </ui:define>
+            <ui:define name="center">
+
+                <h:form id="form" style=" margin-left: 210px; margin-right: auto;">
+                    <p:growl showDetail="true" autoUpdate="true" life="2000" id="growl"/>
+
+                     <p:commandButton style="float: right;" icon="ui-icon-plusthick" update=":addsection"
+                                     actionListener="#{sectionControleur.prepareCreate}"
+                                     value="Ajouter Section" oncomplete="PF('dlgadd').show()"/>
+                    
+
+                    <p:dataTable var="section" value="#{sectionControleur.sections}"
+                                 rowKey="#{section.codesec}" paginator="true" rows="10"
+                                 id="table_sections" emptyMessage="Aucune Section"
+                                 selectionMode="single" 
+                                 filteredValue="#{sectionControleur.filtredSections}">
+
+                        <p:ajax event="rowSelect"    update="deleteButton EditButton" />
+                        <p:ajax event="rowUnselect"  update="deleteButton EditButton" />
+
+                        <f:facet name="header">
+                            Liste des Sections
+                        </f:facet>
+
+                        <p:column headerText="Code Section" filterBy="codesec" sortBy="codesec">                            
+                            <f:facet name="header">
+                                <h:outputText value="Code"/>
+                            </f:facet>
+                            <h:outputText value="#{section.codesec}"/>
+                        </p:column>
+
+                        <p:column headerText="Section" filterBy="section">                            
+                            <f:facet name="header">
+                                <h:outputText value="Section"/>
+                            </f:facet>                         
+                                    <h:outputText value="#{section.section}" />                     
+                        </p:column>
+                        
+                            <p:column style="width: 6%;">
+                            <p:commandButton id="EditButton" icon="ui-icon-pencil" immediate="true"
+                                             update="table_sections :editsection"
+                                             oncomplete="PF('dlgEdit').show()">
+                                <f:setPropertyActionListener value="#{section}"
+                                                             target="#{sectionControleur.newSection}" />
+                            </p:commandButton>
+                        </p:column>                       
+                        <p:column style="width: 6%;">
+                            <p:commandButton id="deleteButton" icon="ui-icon-trash" update="table_sections"
+                                             actionListener="#{sectionControleur.supprimer(section)}"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+                <p:dialog id="addsection" header="Ajouter Section" modal="true" appendTo="@(body)"
+                          width="400" height="150" resizable="false" draggable="false" widgetVar="dlgadd">
+                    <h:form>
+                         <p:fieldset legend="Informations de Section">
+                        <h:panelGrid columns="3" cellpadding="4">
+                            <p:outputLabel value="Section :" for="section"/>
+                            <p:inputText id="section" validatorMessage="Nom de section invalide"
+                                         value="#{sectionControleur.newSection.section}">
+                                <p:ajax update="msgSection" event="keyup" />
+                                <f:validateRegex pattern="[a-zA-Z0-9 _]+" for="section"/>
+                                <f:validateLength minimum="1" for="section"/>
+                            </p:inputText>
+                            <p:message for="section" id="msgSection"/>
+                            <p:outputLabel value="Terminal :" for="terminal"/>
+                            <p:selectBooleanCheckbox id="terminal" value="#{sectionControleur.newSection.terminal}" />
+                            <p:message for="terminal" id="msgterminal"/>
+                        </h:panelGrid>
+                        <div align="center">
+                            <p:commandButton id="submit" value="Ajouter" actionListener="#{sectionControleur.add}" update=":form:table_sections"/>
+                            <p:commandButton immediate="true" value="Annuler" onstart="PF('dlgadd').hide()"
+                                             actionListener="#{sectionControleur.afficheMsgAnnuler}"  />
+                        </div>
+                        </p:fieldset>   
+                    </h:form>
+                </p:dialog>
+                
+                <p:dialog id="editsection" header="Modifier Section" modal="true" appendTo="@(body)"
+                          width="400" height="150" resizable="false" draggable="false" widgetVar="dlgEdit">
+                    <h:form>
+                         <p:fieldset legend="Information de Section">
+                        <h:panelGrid columns="3" cellpadding="4">
+                            <p:outputLabel value="Section :" for="section"/>
+                            <p:inputText id="section" validatorMessage="Nom de section invalide"
+                                         value="#{sectionControleur.newSection.section}">
+                                <p:ajax update="msgSection" event="keyup" />
+                                <f:validateRegex pattern="[a-zA-Z0-9 _]+" for="section"/>
+                            </p:inputText>
+                            <p:message for="section" id="msgSection"/>
+                            <p:outputLabel value="Terminal :" for="terminal"/>
+                            <p:selectBooleanCheckbox id="terminal" value="#{sectionControleur.newSection.terminal}" />
+                            <p:message for="terminal" id="msgterminal"/>
+                        </h:panelGrid>
+                        <div align="center">
+                            <p:commandButton id="submit" value="Modifier"  update=":form:table_sections"
+                                             actionListener="#{sectionControleur.edit}" 
+                                            />
+                            <p:commandButton immediate="true" value="Annuler" onstart="PF('dlgEdit').hide()"
+                                             actionListener="#{sectionControleur.annuler}"  />
+                        </div>
+                        </p:fieldset>   
+                    </h:form>
+                </p:dialog>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

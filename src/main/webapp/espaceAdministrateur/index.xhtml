@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:h="http://java.sun.com/jsf/html"
+       xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:p="http://primefaces.org/ui">
+    <h:head/>
+
+    <h:body>
+        <ui:composition template="template_espace_administrateur.xhtml">
+            <ui:define name="title">
+                Espace Administrateur
+            </ui:define>
+            <ui:define name="center" id="def_center">
+                <div style=" margin-left: 210px">                   
+                <h:form>
+                        <p:fieldset legend="Statistiques">
+                            <p:growl id="growl" showDetail="true"/>
+                            <!-- des graphes representatifs  -->
+
+                            <h:panelGrid columns="2" columnClasses="left,right" style="width: 100%">
+                                <!-- Mise à jour immédiate des données chaque 5 secondes  -->
+                                <p:poll interval="5" update="pfaAffect,pfeAffect,pfaPlan,pfePlan,nombres" />
+                                <p:row>
+                                    <p:column>
+                                        <p:chart id="pfaAffect" type="pie" model="#{adminIndexControleur.pieModelPfaAffec}" style="width: 400px;height:300px">
+                                            <p:ajax event="itemSelect" listener="#{adminIndexControleur.selectPfaAffec}" update="growl,:form2:c1"
+                                                    oncomplete="PF('affichPfaAff').show()"/>
+                                        </p:chart>
+                                    </p:column>
+                                    <p:column>
+                                        <p:chart id="pfeAffect" type="pie" model="#{adminIndexControleur.pieModelPfeAffec}" style="width: 400px;height:300px">
+                                            <p:ajax event="itemSelect" listener="#{adminIndexControleur.selectPfeAffec}" update="growl,:form2:c3"
+                                                    oncomplete="PF('affichPfeAff').show()"/>
+                                        </p:chart>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:chart id="pfaPlan" type="pie" model="#{adminIndexControleur.pieModelPfaplan}" style="width: 400px;height:300px">
+                                            <p:ajax event="itemSelect" listener="#{adminIndexControleur.selectPfaPlan}" update="growl,:form2:c2"
+                                                    oncomplete="PF('affichPfaPlan').show()"/>
+                                        </p:chart>
+                                    </p:column>
+                                    <p:column>
+                                        <p:chart id="pfePlan" type="pie" model="#{adminIndexControleur.pieModelPfeplan}" style="width: 400px;height:300px">
+                                            <p:ajax event="itemSelect" listener="#{adminIndexControleur.selectPfePlan}" update="growl,:form2:c4"
+                                                    oncomplete="PF('affichPfePlan').show()"/>
+                                        </p:chart>
+                                    </p:column>
+                                </p:row>
+                            </h:panelGrid>
+                            <p:chart id="nombres" type="bar" model="#{adminIndexControleur.barModel}" style="width: 1000px;height:300px;"/>
+                        </p:fieldset>
+                    </h:form>
+                    <h:form id="form2">
+                        <p:dialog id="dlg1" widgetVar="affichPfaAff"  appendTo="@(body)" closeOnEscape="true"
+                                  modal="true" dynamic="true" draggable="false" closable="true">
+                            <p:chart id="c1" type="pie" model="#{adminIndexControleur.pfaAffectModel}" style="width: 700px;height:500px;"/>
+                        </p:dialog>
+                        <p:dialog id="dlg2" widgetVar="affichPfaPlan" appendTo="@(body)" closable="true" modal="true" dynamic="true" closeOnEscape="true">
+                            <p:chart id="c2" type="pie" model="#{adminIndexControleur.pfaPlanModel}" style="width: 700px;height:500px;"/>
+                        </p:dialog>
+                        <p:dialog id="dlg3" widgetVar="affichPfeAff" appendTo="@(body)" closable="true" modal="true" dynamic="true" closeOnEscape="true">
+                            <p:chart id="c3" type="pie" model="#{adminIndexControleur.pfeAffectModel}" style="width: 700px;height:500px;"/>
+                        </p:dialog>
+                        <p:dialog id="dlg4" widgetVar="affichPfePlan" appendTo="@(body)" closable="true" modal="true" dynamic="true" closeOnEscape="true">
+                            <p:chart id="c4" type="pie" model="#{adminIndexControleur.pfePlanModel}" style="width: 700px;height:500px;"/>
+                        </p:dialog>
+                    </h:form>
+                </div>
+            </ui:define>
+            
+        </ui:composition>
+    </h:body>
+</html>
+

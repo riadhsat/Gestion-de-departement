@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:h="http://java.sun.com/jsf/html"
+       xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:p="http://primefaces.org/ui">
+
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administratif.xhtml">
+            <ui:define name="title">
+                Modifier Etudiants
+            </ui:define>
+            <ui:define name="center">
+
+                <h:form id="formajoutetudiant">
+                    <p:fieldset legend="Modification d'étudiants">
+                        <!-- pour les notifs -->
+                        <p:growl id="growl2" showDetail="true" autoUpdate="true" sticky="false" life="2000"/>
+
+                        <p:dataTable var="etud" value="#{etudiantControleur.etudiants}">
+                            <p:column headerText="CIN">
+                                <p:inplace editor="true">
+                                    <p:inputText value="#{etud.cinetu}"/>
+                                </p:inplace>
+                            </p:column>
+                            <p:column headerText="N°Inscription">
+                                <p:inplace editor="true">
+                                    <p:inputText value="#{etud.ins}"/>
+                                </p:inplace>
+                            </p:column>
+                            <p:column headerText="N°Inscription">
+                                <p:inplace editor="true">
+                                    <p:inputText value="#{etud.ins}"/>
+                                </p:inplace>
+                            </p:column>
+                            <p:column headerText="Nom et prénom">
+                                <p:inplace editor="true">
+                                    <p:inputText value="#{etud.nomPrenom}"/>
+                                </p:inplace>
+                            </p:column>
+                            <p:column headerText="Nom et prénom">
+                                <p:inplace editor="true">
+                                    <p:inputText value="#{etud.nomPrenom}"/>
+                                </p:inplace>
+                            </p:column>
+                            <p:column headerText="Section">
+                                <p:inplace editor="true">
+                                    <p:selectOneMenu id="section" value="#{etud.section.section}">
+                                        <f:selectItems value="#{sectionControleur.itemSections}"/>
+                                    </p:selectOneMenu>
+                                </p:inplace>
+                            </p:column>
+                            <p:column headerText="Section">
+                                <p:inplace editor="true">
+                                    <p:selectOneMenu id="specialite" value="#{etud.specialite.specialite}">
+                                        <f:selectItems value="#{specialiteControleur.itemSpecialites}"/>
+                                    </p:selectOneMenu>  
+                                </p:inplace>
+                            </p:column>
+                            <p:column headerText="Date de naissance">
+                                <p:inplace editor="true">
+                                   <p:inputText id="dateNais" value="#{etud.datenaissance}">
+                                        <f:convertDateTime pattern="d/M/yyyy"/>
+                                    </p:inputText>
+                                </p:inplace>
+                            </p:column>
+                            <p:column headerText="Adresse mail">
+                                <p:inplace editor="true">
+                                    <p:inputText id="mail" value="#{etudiantControleur.mail}"/>
+                                </p:inplace>
+                            </p:column>
+                        </p:dataTable>
+                        <div align="center">
+                            <p:commandButton value="Mettre à jour" ajax="true" action="#{etudiantControleur.update()}" update="growl2"/>
+                        </div>
+                    </p:fieldset>
+
+                </h:form>
+                <p:ajaxStatus id="ajaxStatusPanel">
+                    <f:facet name="start">
+                        <h:graphicImage value="../resources/img/ajax-loader.gif"/>
+                    </f:facet>
+                    <f:facet name="complete">
+                        <h:outputText value=""/>
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

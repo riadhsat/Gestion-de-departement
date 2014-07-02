@@ -1,0 +1,359 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administrateur.xhtml">
+            <ui:define name="script">
+                <h:outputScript library="js" name="script.js" target="head"/>
+            </ui:define>
+            <ui:define name="title">
+                Planning des projets
+            </ui:define>
+
+            <ui:define name="center" id="def_center">
+
+                <h:outputScript library="js" name="script.js" target="head"/>
+
+                <h:form id="calendrier" style=" margin-left: 208px;">
+                    <p:panel header="Planning des projets" >
+                        <p:growl id="messages" autoUpdate="true" showDetail="true" />
+
+                        <h:panelGrid columns="4" cellpadding="10" style="width: 700px;margin: auto;">
+                            <p:outputLabel for="select_salle" value="Salle" />
+                            <p:selectOneMenu id="select_salle" value="#{planningPFAcontroleur.selectedSalle}"
+                                             converter="genericConverter" style="width: 150px">
+                                <f:ajax  render="@form"/>
+                                <f:selectItem itemLabel="Tout Salle" itemValue="#{null}"/>
+                                <f:selectItems var="salle" value="#{salleControleur.salles}"
+                                               itemLabel="#{salle.salle}" itemValue="#{salle}"/>
+                                <p:ajax update="schedule messages :form_projets:pan_projets"                                           
+                                        listener="#{planningPFAcontroleur.mettreAJourCalander}"
+                                        onstart="PF('blockUIWidget').block()"
+                                        oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:selectOneMenu>
+                            
+                            <p:outputLabel for="select_section" value="Planning par Section :"/>
+                            <p:selectOneMenu id="select_section" value="#{planningPFAcontroleur.selectedSection}"
+                                             converter="genericConverter" style="width: 150px">
+                                <f:ajax  render="@form"/>
+                                <f:selectItem itemLabel="Toute Section" itemValue="#{null}"/>
+                                <f:selectItems var="section" value="#{planningPFAcontroleur.sectionNonTerminal}"
+                                               itemLabel="#{section.section}" itemValue="#{section}"/>
+                                <p:ajax update="schedule :form_projets:pan_projets"                                           
+                                        listener="#{planningPFAcontroleur.updateCalendar}"
+                                        onstart="PF('blockUIWidget').block()"
+                                        oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+
+                        <p:schedule id="schedule" value="#{planningPFAcontroleur.eventModel}"
+                                    widgetVar="myschedule" locale="fr" view="agendaWeek"
+                                    maxTime="19:00" minTime="8:00" leftHeaderTemplate="prev,next"
+                                    rightHeaderTemplate="today" aspectRatio="0.3"
+                                    slotMinutes="60" axisFormat="HH:mm" allDaySlot="false"
+                                    resizable="false">
+                            <p:ajax event="eventSelect" listener="#{planningPFAcontroleur.onEventSelect}" 
+                                    update=":dialog" onstart="PF('blockUIWidget').block()"
+                                    oncomplete="PF('dlg').show();PF('blockUIWidget').unblock()"/>                            
+                        </p:schedule>
+                    </p:panel>
+                </h:form>
+
+                <h:form id="form_projets">
+                    <p:outputLabel value="Recherche :"/>
+                    <p:inputText value="#{planningPFAcontroleur.nomAchercher}" >
+                        <p:ajax event="keyup" listener="#{planningPFAcontroleur.afficherNonPlanifies}" 
+                                update="pan_projets" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                    </p:inputText><br/>
+                    <br/>
+
+                    <p:dataGrid paginator="true" lazy="true" id="pan_projets"
+                                var="projet" value="#{planningPFAcontroleur.toutProjetNonPlanifierChercher}"
+                                paginatorPosition="top" rows="3"
+                                emptyMessage="Pas de projets" columns="1" 
+                                paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}">
+                        <p:column>
+                            <p:panel style="width: 280px" 
+                                     header="#{projet.codepfa}- #{projet.nomprojet}" >
+                                <h:outputText value="#{projet.description}"/>
+                                <div style="text-align: center">
+                                <p:commandButton immediate="true" update=":newPplanifier" value="planifier"
+                                               title="Détails du projet" onstart="PF('blockUIWidget').block()" 
+                                               oncomplete="PF('dlgnplani').show();PF('blockUIWidget').unblock()">                                    
+                                    <f:setPropertyActionListener value="#{projet}"
+                                                                 target="#{planningPFAcontroleur.selectedPfa}" />
+                                </p:commandButton>
+                                <p:commandButton immediate="true" update=":dialog" value="Detail"
+                                               title="Détails du projet" 
+                                               onstart="PF('blockUIWidget').block()" 
+                                               oncomplete="PF('dlg').show();PF('blockUIWidget').unblock()">                                    
+                                    <f:setPropertyActionListener value="#{projet}"
+                                                                 target="#{planningPFAcontroleur.selectedPfa}" />
+                                </p:commandButton>
+                                    </div>
+                            </p:panel>
+                        </p:column>
+                    </p:dataGrid>
+                </h:form>
+                <p:dialog id="newPplanifier" dynamic="true" widgetVar="dlgnplani" draggable="false"
+                          closable="false" header="Planification de projet" modal="true" appendTo="@(body)"                           
+                          width="710"  height="245"  resizable="false" >
+                    <h:form>
+                        <p:wizard backLabel="Retour" nextLabel="Suivant"  flowListener="#{planningPFAcontroleur.newplanifierprojet}"
+                                  widgetVar="wiznewplani">
+                            <p:tab id="Date" title="Date">                                
+                                <h:panelGrid columns="2" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                <p:outputLabel value="Date soutenance"/>
+                                
+                                <p:calendar id="date_soutenance" locale="fr" disabledWeekends="true" pattern="dd/MM/yyyy"
+                                            value="#{planningPFAcontroleur.selectedPfa.datesoutenance}" required="true" 
+                                            requiredMessage="date doit etre non vide">
+                                    
+                                </p:calendar>
+                                <p:outputLabel for="heure_soutenance" value="Heure soutenance"/>
+                                <pe:timePicker id="heure_soutenance" value="#{planningPFAcontroleur.heure_soutenance}" 
+                                               locale="fr" required="true" requiredMessage="l'heure doit etre non vide"
+                                               mode="popup" startHours="8" endHours="16" intervalMinutes="15" rows="2">
+                                </pe:timePicker>
+
+                                <p:outputLabel for="duree_soutenance" value="Durée (Heures)"/>
+                                <p:selectOneMenu id="duree_soutenance" 
+                                                 value="#{planningPFAcontroleur.selectedPfa.dureesoutenance}">
+                                    <f:selectItem itemLabel="01:00" itemValue="01:00"/>
+                                    <f:selectItem itemLabel="01:30" itemValue="01:30"/>
+                                    <f:selectItem itemLabel="02:00" itemValue="02:00"/>                                    
+                                </p:selectOneMenu>
+                                </h:panelGrid>                                
+                            </p:tab>
+                            <p:tab id="Salle" title="Salle">
+                                <br/>
+                                <br/>                                
+                                <h:panelGrid columns="2" cellpadding="5" cellspacing="5" style="text-align: center;">                                    
+                                 <p:outputLabel for="salle" value="Salle"/>
+                                <p:selectOneMenu id="salle" label="Salle" value="#{planningPFAcontroleur.selectedPfa.salle}"
+                                                 required="true" requiredMessage="Salle doit etre non vide"
+                                                         converter="genericConverter" style="width: 130px">
+                                            <f:selectItem itemLabel="Aucune Salle" itemValue="#{null}"/>
+                                            <f:selectItems var="s" value="#{planningPFAcontroleur.filtreSalle}"
+                                                           itemLabel="#{s.salle}" itemValue="#{s}"/>
+                                        </p:selectOneMenu>
+                                 </h:panelGrid>
+                            </p:tab>
+                            <p:tab id="Confirmation" title="Confirmation">
+                                <br/>
+                                <br/>
+                                <h:panelGrid columns="4" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                    <p:outputLabel value="Date soutenance :"/>
+                                    <p:outputLabel value="#{planningPFAcontroleur.selectedPfa.datesoutenance}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                    <p:outputLabel value="Heure de soutenance :"/>
+                                    <p:outputLabel value="#{planningPFAcontroleur.selectedPfa.datesoutenance}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </p:outputLabel>
+                                    <p:outputLabel value="Durée de soutenance :"/>
+                                    <p:outputLabel value="#{planningPFAcontroleur.selectedPfa.dureesoutenance}"/>
+                                    <p:outputLabel value="Salle :"/>
+                                    <p:outputLabel value="#{planningPFAcontroleur.selectedPfa.salle.salle}" />                                    
+                                </h:panelGrid>
+                                <div style="text-align: center">
+                                <p:commandButton immediate="true"  value="Enregister" onstart="PF('blockUIWidget').block()"
+                                                 update=":form_projets:pan_projets :calendrier:schedule" actionListener="#{planningPFAcontroleur.enregistrer}"
+                                          oncomplete="PF('dlgnplani').hide();PF('wiznewplani').loadStep (PF('wiznewplani').cfg.steps [0], true);PF('blockUIWidget').unblock()">
+                                     <f:setPropertyActionListener value="#{true}"
+                                                          target="#{planningPFAcontroleur.enregisAnnuler}" />                            
+                                </p:commandButton>
+                              </div>
+                            </p:tab>                            
+                        </p:wizard> 
+                        <div style="text-align: center">
+                        <h:form>
+                             <p:commandButton immediate="true"  value="Quitter" onstart="PF('blockUIWidget').block()"
+                                         actionListener="#{planningPFAcontroleur.annuler}" update=":form_projets:pan_projets"
+                                         oncomplete="PF('dlgnplani').hide();PF('wiznewplani').loadStep (PF('wiznewplani').cfg.steps [0], true);PF('blockUIWidget').unblock()">
+                             <f:setPropertyActionListener value="#{false}"
+                                                          target="#{planningPFAcontroleur.enregisAnnuler}" />
+                             </p:commandButton>
+                        </h:form>   
+                    </div>
+                    </h:form> 
+                    
+                </p:dialog> 
+                <p:dialog id="editPplanifier" dynamic="true" widgetVar="dlgeditpro" draggable="false"
+                          closable="false"
+                          header="Planification de projet" modal="true" appendTo="@(body)"                           
+                          width="710"  height="300"  resizable="false" >
+                    <h:form>
+                        <p:wizard backLabel="Retour" nextLabel="Suivant"  flowListener="#{planningPFAcontroleur.editplanifierprojet}"
+                                  widgetVar="wizeditplani">
+                            <p:tab id="Date" title="Date">
+                                <br/>
+                                <br/>
+                                <h:panelGrid columns="2" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                <p:outputLabel value="Date soutenance"/>
+                                
+                                <p:calendar id="date_soutenance" locale="fr" disabledWeekends="true" pattern="dd/MM/yyyy"
+                                            value="#{planningPFAcontroleur.selectedPfa.datesoutenance}" required="true" 
+                                            requiredMessage="date doit etre non vide">
+                                    
+                                </p:calendar>
+                                <p:outputLabel for="heure_soutenance" value="Heure soutenance"/>
+                                <pe:timePicker id="heure_soutenance" value="#{planningPFAcontroleur.heure_soutenance}" 
+                                               locale="fr" required="true" requiredMessage="l'heure doit etre non vide"
+                                               mode="popup" startHours="8" endHours="16" intervalMinutes="15" rows="2">
+                                </pe:timePicker>
+
+                                <p:outputLabel for="duree_soutenance" value="Durée (Heures)"/>
+                                <p:selectOneMenu id="duree_soutenance" 
+                                                 value="#{planningPFAcontroleur.selectedPfa.dureesoutenance}">
+                                    <f:selectItem itemLabel="01:00" itemValue="01:00"/>
+                                    <f:selectItem itemLabel="01:30" itemValue="01:30"/>
+                                    <f:selectItem itemLabel="02:00" itemValue="02:00"/>                                    
+                                </p:selectOneMenu>
+                                </h:panelGrid>
+                                
+                            </p:tab>
+                            <p:tab id="Salle" title="Salle">
+                                 <br/>
+                                <br/>                                
+                                <h:panelGrid columns="2" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                    
+                                 <p:outputLabel for="salle" value="Salle"/>
+                                <p:selectOneMenu id="salle" label="Salle" value="#{planningPFAcontroleur.selectedPfa.salle}"
+                                                 required="true" requiredMessage="Salle doit etre non vide"
+                                                         converter="genericConverter" style="width: 130px">                                            
+                                            <f:selectItems var="s" value="#{planningPFAcontroleur.filtreSalle}"
+                                                           itemLabel="#{s.salle}" itemValue="#{s}"/>
+                                        </p:selectOneMenu>
+                                 </h:panelGrid>
+                            </p:tab>                  
+                            <p:tab id="Confirmation" title="Confirmation">
+                                <br/>
+                                <br/>
+                                <h:panelGrid columns="4" cellpadding="5" cellspacing="5" style="text-align: center;">
+                                    <p:outputLabel value="Date soutenance :"/>
+                                    <p:outputLabel value="#{planningPFAcontroleur.selectedPfa.datesoutenance}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                    <p:outputLabel value="Heure de soutenance :"/>
+                                    <p:outputLabel value="#{planningPFAcontroleur.selectedPfa.datesoutenance}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                    </p:outputLabel>
+                                    <p:outputLabel value="Durée de soutenance :"/>
+                                    <p:outputLabel value="#{planningPFAcontroleur.selectedPfa.dureesoutenance}"/>
+                                    <p:outputLabel value="Salle :"/>
+                                    <p:outputLabel value="#{planningPFAcontroleur.selectedPfa.salle.salle}" />                                    
+                                 </h:panelGrid> 
+                                <div style="text-align: center">
+                                <p:commandButton immediate="true"  value="Enregister" onstart="PF('blockUIWidget').block()"
+                                                 update=":calendrier:schedule" actionListener="#{planningPFAcontroleur.enregistrer}"
+                                          oncomplete="PF('dlgeditpro').hide();PF('wizeditplani').loadStep (PF('wizeditplani').cfg.steps [0], true);PF('blockUIWidget').unblock()">
+                                     <f:setPropertyActionListener value="#{true}"
+                                                          target="#{planningPFAcontroleur.enregisAnnuler}" />                            
+                                </p:commandButton>
+                              </div>
+                            </p:tab>                        
+                        </p:wizard>
+                        <div style="text-align: center">
+                        <h:form>
+                             <p:commandButton immediate="true"  value="Quitter" onstart="PF('blockUIWidget').block()"
+                                              actionListener="#{planningPFAcontroleur.updateCalendar}" update=":calendrier:schedule"
+                                         oncomplete="PF('dlgeditpro').hide();PF('wizeditplani').loadStep (PF('wizeditplani').cfg.steps [0], true);PF('blockUIWidget').unblock()">
+                             <f:setPropertyActionListener value="#{false}"
+                                                          target="#{planningPFAcontroleur.enregisAnnuler}" />
+                             </p:commandButton>
+                        </h:form>   
+                    </div>
+                    </h:form>              
+                </p:dialog>
+
+                
+                <p:dialog id="dialog" header="Détails du projet" modal="true" resizable="false"
+                           appendTo="@(body)" closeOnEscape="true" width="550" height="550"
+                          draggable="false" widgetVar="dlg" dynamic="true">
+                    <div align="center">
+                        <h:form>
+                            <p:fieldset legend="Information de Projet">
+                            <h:panelGrid columns="2" cellpadding="10" cellspacing="5" width="500px">
+                                <p:outputLabel for="nom_projet" value="Nom du projet"/>
+                                <h:outputText id="nom_projet"  value="#{planningPFAcontroleur.selectedPfa.nomprojet}"/>
+
+                                <p:outputLabel for="decription" value="Description du projet"/>
+                                <h:outputText id="decription" value="#{planningPFAcontroleur.selectedPfa.description}"/>
+
+                                <p:outputLabel value="Etudiant 1 :"/>
+                                <h:outputText value="#{planningPFAcontroleur.selectedPfa.etudiantByEtuCin.nomPrenom}"/>
+
+                                <p:outputLabel value="Etudiant 2 :"
+                                               rendered="#{planningPFAcontroleur.selectedPfa.etudiantByEtuCin1 ne null}"/>
+
+                                <p:outputLabel rendered="#{planningPFAcontroleur.selectedPfa.etudiantByEtuCin1 ne null}"
+                                              value="#{planningPFAcontroleur.selectedPfa.etudiantByEtuCin1.nomPrenom}"/>
+                                
+                                <p:outputLabel value="Encadreur :"/>                                 
+                                <p:outputLabel value="non affecté" 
+                                               rendered="#{planningPFAcontroleur.selectedPfa.encardeur eq null}"/>
+                                <p:outputLabel rendered="#{planningPFAcontroleur.selectedPfa.encardeur ne null}"  
+                                               value="#{planningPFAcontroleur.selectedPfa.encardeur.prenom} #{planningPFAcontroleur.selectedPfa.encardeur.nom}"/>
+                                
+                                                               
+                                
+                                <p:outputLabel value="Date soutenance :"/>
+                                <p:column>
+                                <p:outputLabel value="non affecté" 
+                                              rendered="#{planningPFAcontroleur.selectedPfa.datesoutenance eq null}"/>
+                                    <p:outputLabel value="#{planningPFAcontroleur.selectedPfa.datesoutenance}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                    </p:outputLabel>
+                                </p:column>
+                                <p:outputLabel value="Heure de soutenance :"/>
+                                <p:column>
+                                <p:outputLabel value="non affecté" 
+                                              rendered="#{planningPFAcontroleur.selectedPfa.datesoutenance eq null}"/>                                
+                                <p:outputLabel value="#{planningPFAcontroleur.selectedPfa.datesoutenance}"
+                                                   rendered="#{planningPFAcontroleur.selectedPfa.datesoutenance ne null}">
+                                        <f:convertDateTime pattern="HH:mm"/>
+                                </p:outputLabel>
+                                </p:column>
+                                <p:outputLabel value="Durée (Heures)"/>
+                                <p:column>
+                                <p:outputLabel value="non affecté" 
+                                               rendered="#{planningPFAcontroleur.selectedPfa.dureesoutenance eq null}"/>
+                                <p:outputLabel value="#{planningPFAcontroleur.selectedPfa.dureesoutenance}" /> 
+                                </p:column>
+
+                                <p:outputLabel value="Salle :" />
+                                <p:column>
+                                <p:outputLabel value="non affecté" rendered="#{planningPFAcontroleur.selectedPfa.salle eq null}"/>
+                                <p:outputLabel rendered="#{planningPFAcontroleur.selectedPfa.salle ne null}"  value="#{planningPFAcontroleur.selectedPfa.salle.salle}"/>
+                                 </p:column>                              
+                            </h:panelGrid>
+                            <br/> 
+                            <p:commandButton immediate="true"   value="planifier" update=":newPplanifier"
+                                             rendered="#{planningPFAcontroleur.selectedPfa.datesoutenance eq null}"
+                                             title="planifier" onstart="PF('blockUIWidget').block()" 
+                                             oncomplete="PF('dlgnplani').show();PF('dlg').hide();PF('blockUIWidget').unblock()"/>
+                            <p:commandButton value="Annuler la planification" update=":calendrier:schedule :form_projets:pan_projets"           
+                                             onstart="PF('blockUIWidget').block()" rendered="#{planningPFAcontroleur.selectedPfa.datesoutenance ne null}"
+                                             actionListener="#{planningPFAcontroleur.annulerProjet}"
+                                             oncomplete="PF('dlg').hide();PF('blockUIWidget').unblock()"/>
+                            <p:commandButton value="Quitter"            
+                                             onstart="PF('blockUIWidget').block()"
+                                             oncomplete="PF('dlg').hide();PF('blockUIWidget').unblock()"/>
+                            </p:fieldset>
+                        </h:form>
+                    </div>
+                </p:dialog>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

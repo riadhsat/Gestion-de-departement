@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_etudiant.xhtml">
+            <ui:define name="title">
+                Proposition de projet 
+            </ui:define>    
+            <ui:define name="center">
+                <p:tooltip/>
+                <h:form>
+                    <!-- pour les notifs -->
+                    <p:growl id="growl" showSummary="true" sticky="false" life="2000"/>
+                    <p:panel header="proposer projet">
+                        <p:outputLabel for="nature_projet" value="Binome"/>
+                        <p:selectOneRadio id="nature_projet" value="#{projetProposeControleur.binome}">
+                            <f:selectItem itemLabel="individuelle" itemValue="#{false}"/>
+                            <f:selectItem itemLabel="binome" itemValue="#{true}" />
+                        </p:selectOneRadio>
+
+                        <p:fieldset legend="Binome" rendered="#{projetProposeControleur.binome eq true}">
+                            <h:panelGrid id="grid2" columns="3" cellpadding="3">  
+                                <p:outputLabel value="CIN :" for="cin2"/>
+                                <p:inputText id="cin2" value="#{projetProposeControleur.projetPropose.etudiantByEtuCinetu.cinetu}" required="true">
+                                    <p:ajax update="msgCin2" event="keyup" />
+                                </p:inputText>
+                                <p:message for="cin2" id="msgCin2"/>
+
+                                <p:outputLabel value="Nom et Prénom :" for="nom2"/>
+                                <h:outputText id="nom2" value="#{projetProposeControleur.getNomEtudiant(projetProposeControleur.projetPropose.etudiantByEtuCinetu.cinetu)}"/>
+                                <!-- -->
+                            </h:panelGrid>
+                        </p:fieldset>
+
+                        <h:panelGrid id="grid3" columns="4" cellpadding="2">
+                            <p:outputLabel value="Titre :" for="nom_projet"/>
+                            <p:inputText id="nom_projet" required="true" value="#{projetProposeControleur.projetPropose.nomProjet}">
+                                <p:ajax update="msgNomProj" event="blur" />
+                            </p:inputText>
+                            <p:message for="nom_projet" id="msgNomProj"/>
+                            <!-- comment -->
+                            <!-- comment -->
+                            <p:outputLabel value="Langage(s) de programmation :" for="lan_prog"/>
+                            <p:inputText id="lan_prog" value="#{projetProposeControleur.projetPropose.langageprog}" placeholder="langage1, langage2...">
+                                <p:ajax update="msgLangProg" event="keyup" />
+                            </p:inputText>
+                            <p:message for="lan_prog" id="msgLangProg"/>
+                            <!-- comment -->
+                            <p:outputLabel value="Description du projet :" for="description_projet"/>
+                            <p:inputTextarea id="description_projet" value="#{projetProposeControleur.projetPropose.description}" placeholder="Description du projet">
+                                <p:ajax update="msgDescProj" event="keyup" />
+                            </p:inputTextarea>
+                            <p:message for="description_projet" id="msgDescProj"/>
+                        </h:panelGrid>
+                        <div align="center">
+                            <p:commandButton id="proposer" value="Choisir un encadrant" actionListener="#{projetProposeControleur.ajouterparEtudiant()}" update="growl,@(form)"/>
+                        </div>
+                    </p:panel>
+                </h:form>
+                <p:ajaxStatus id="ajaxStatusPanel">
+                    <f:facet name="start">
+                        <h:graphicImage value="../resources/img/ajax-loader.gif"/>
+                    </f:facet>
+                    <f:facet name="complete">
+                        <h:outputText value=""/>
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

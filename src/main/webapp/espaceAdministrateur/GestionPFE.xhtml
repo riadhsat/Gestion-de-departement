@@ -1,0 +1,220 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administrateur.xhtml">
+            <ui:define name="title">
+                Gestion des Projet fin d'etudes
+            </ui:define>
+            <ui:define name="center">
+                 <p:growl id="messages" autoUpdate="true" showDetail="true" /> 
+                <h:form id="PfeListForm" style=" margin-left: 210px; margin-right: auto;">
+                <p:panel header="liste des projet fin d'etude">
+                    <p:dataTable id="datalist" value="#{pfeControleur.pfes}" var="pfe"
+                                 selectionMode="single" selection="#{pfeControleur.selected}"
+                                 paginator="true"
+                                 rowKey="#{pfe.codepfe}"
+                                 rows="10">
+                        
+                        <p:ajax event="rowSelect"   update="createButton editButton deleteButton"/>
+                        <p:ajax event="rowUnselect" update="createButton editButton deleteButton"/>
+
+                        <p:column filterStyle="width: 16px;" filterBy="#{pfe.codepfe}">
+                            <f:facet name="header">
+                                <h:outputText value="Code"/>
+                            </f:facet>
+                            <h:outputText value="#{pfe.codepfe}"/>
+                        </p:column>
+                        <p:column filterStyle="width: 16px;" filterBy="#{pfe.nomprojet}">
+                            <f:facet name="header">
+                                <h:outputText value="Nom projet"/>
+                            </f:facet>
+                            <h:outputText value="#{pfe.nomprojet}"/>
+                        </p:column>
+                        <p:column filterStyle="width: 16px;" filterBy="#{pfe.description}">
+                            <f:facet name="header">
+                                <h:outputText value="Description"/>
+                            </f:facet>
+                            <h:outputText value="#{pfe.description}"/>
+                        </p:column>
+                        <p:column filterBy="#{pfe.methodeconception}">
+                            <f:facet name="header">
+                                <h:outputText value="Methode de Conception"/>
+                            </f:facet>
+                            <h:outputText value="#{pfe.methodeconception}"/>
+                        </p:column>
+                        <p:column filterBy="#{pfe.langageprog}" filterStyle="width: 50px;">
+                            <f:facet name="header">
+                                <h:outputText value="Language de programmation"/>
+                            </f:facet>
+                            <h:outputText value="#{pfe.langageprog}"/>
+                        </p:column>
+                        <p:column filterBy="#{pfe.etudiantByEtuCin.nomPrenom}">
+                            <f:facet name="header">
+                                <h:outputText value="Etudiant 1"/>
+                            </f:facet>
+                            <h:outputText value="#{pfe.etudiantByEtuCin.nomPrenom}"/>
+                        </p:column>
+                        <p:column filterBy="#{pfe.etudiantByEtuCin1.nomPrenom}">
+                            <f:facet name="header">
+                                <h:outputText value="Etudiant 2"/>
+                            </f:facet>
+                            <h:outputText value="#{pfe.etudiantByEtuCin1.nomPrenom}" 
+                                          rendered="#{pfe.etudiantByEtuCin1 ne null}"/>
+                        </p:column>
+                        <p:column filterBy="#{pfe.encadreur.prenom}">
+                            <f:facet name="header">
+                                <h:outputText value="Encadreur"/>
+                            </f:facet>
+                            <h:outputText value="#{pfe.encadreur.prenom} #{pfe.encadreur.nom}"/>
+                        </p:column>
+                        <p:column filterBy="#{pfe.section.section}" filterStyle="width: 20px;">
+                            <f:facet name="header">
+                                <h:outputText value="Section"/>
+                            </f:facet>
+                            <h:outputText value="#{pfe.section.section}"/>
+                        </p:column>
+                        <p:column filterBy="#{pfe.specialite.specialite}">
+                            <f:facet name="header">
+                                <h:outputText value="Specialite"/>
+                            </f:facet>
+                            <h:outputText value="#{pfe.specialite.specialite}"/>
+                        </p:column>
+                        <f:facet name="header">
+                            <p:commandButton id="createButton" icon="ui-icon-plus"   value="Ajouter" actionListener="#{pfeControleur.prepareCreate}" update=":PfeCreateForm" oncomplete="PF('PfeCreateDialog').show()"/>
+                            <p:commandButton id="editButton"   icon="ui-icon-pencil" value="Modifier" update=":PfeEditForm" oncomplete="PF('PfeEditDialog').show()" disabled="#{empty pfeControleur.selected}"/>
+                            <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="Supprimer" actionListener="#{pfeControleur.supprimer}" update="datalist" disabled="#{empty pfeControleur.selected}"/>
+                        </f:facet>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+                 <p:dialog id="PfeCreateDlg" widgetVar="PfeCreateDialog" modal="true" 
+                           resizable="false" appendTo="@(body)" header="creer un projet"
+                           dynamic="true">
+            <h:form id="PfeCreateForm">
+                <p:fieldset legend="Information">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" >       
+                        <p:outputLabel value="Nom projet" for="nomprojet" />
+                        <p:inputText id="nomprojet" value="#{pfeControleur.newpfe.nomprojet}" required="true" requiredMessage="saisie le nom de projet"/>
+                        <p:outputLabel value="description" for="description" />
+                        <p:inputTextarea rows="4" cols="30" id="description" value="#{pfeControleur.newpfe.description}"/>
+                        <p:outputLabel value="Methode de conception" for="methodeconception" />
+                        <p:inputText id="methodeconception" value="#{pfeControleur.newpfe.methodeconception}"/>
+                        <p:outputLabel value="Langage de Programmation" for="langageprog" />
+                        <p:inputText id="langageprog" value="#{pfeControleur.newpfe.langageprog}" />
+                        <p:outputLabel value="Encadreur" for="encadreur" />
+                        <p:selectOneMenu id="encadreur" value="#{pfeControleur.newpfe.encadreur}" converter="genericConverter"
+                                         required="true" requiredMessage="selectionne un enseignant">
+                            <f:selectItems value="#{enseignantControleur.listEnseignants}"
+                                           var="enseignant" itemLabel="#{enseignant.prenom} #{enseignant.nom}"
+                                           itemValue="#{enseignant}"/>
+                        </p:selectOneMenu>              
+                        <p:outputLabel value="Section" for="section" />
+                        <p:selectOneMenu id="section" value="#{pfeControleur.newpfe.section}" required="true" 
+                                         requiredMessage="selectionne une section" converter="genericConverter">                            
+                            <f:selectItems value="#{sectionControleur.sections}"
+                                           var="section" itemLabel="#{section.section}"
+                                           itemValue="#{section}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Etudiant 1" for="etudiant1" />
+                        <p:selectOneMenu id="etudiant1" value="#{pfeControleur.newpfe.etudiantByEtuCin}" 
+                                         converter="genericConverter" required="true" requiredMessage="selectionne un etudiant">
+                            <f:selectItems value="#{etudiantControleur.etudiants}"
+                                           var="etudiant" itemLabel="#{etudiant.nomPrenom}"
+                                           itemValue="#{etudiant}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Etudiant 2" for="etudiant2" />
+                        <p:selectOneMenu id="etudiant2" value="#{pfeControleur.newpfe.etudiantByEtuCin1}" converter="genericConverter">
+                            <f:selectItem noSelectionOption="true" itemLabel="-------"/>
+                            <f:selectItems value="#{etudiantControleur.etudiants}"
+                                           var="etudiant" itemLabel="#{etudiant.nomPrenom}"
+                                           itemValue="#{etudiant}"/>
+                        </p:selectOneMenu>
+                        
+                        <p:outputLabel value="specialite" for="specialite" />
+                        <p:selectOneMenu id="specialite" value="#{pfeControleur.newpfe.specialite}" 
+                                         converter="genericConverter">
+                            <f:selectItems value="#{specialiteControleur.specialites}"
+                                           var="specialite" itemLabel="#{specialite.specialite}"
+                                           itemValue="#{specialite}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid> 
+                    <div style="text-align: center">
+                    <p:commandButton type="submit"  actionListener="#{pfeControleur.ajouter}" value="Ajouter" update="display,:PfeListForm:datalist"
+                                     oncomplete="PfeCreateDialog.hide()"/>
+                    <p:commandButton  immediate="true" value="annuler" onclick="PfeCreateDialog.hide()"/>
+                    </div>
+                 </h:panelGroup>
+                 </p:fieldset>
+            </h:form>      
+        </p:dialog>
+                <p:dialog id="PfeEditDlg" widgetVar="PfeEditDialog" modal="true" resizable="false" 
+                          appendTo="@(body)" header="#{bundle.EditPfeTitle}" dynamic="true">
+            <h:form id="PfeEditForm">
+                <p:fieldset legend="Information">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" >       
+                        <p:outputLabel value="Nom projet" for="nomprojet" />
+                        <p:inputText id="nomprojet" value="#{pfeControleur.selected.nomprojet}" required="true" requiredMessage="saisie le nom de projet"/>
+                        <p:outputLabel value="description" for="description" />
+                        <p:inputTextarea rows="4" cols="30" id="description" value="#{pfeControleur.selected.description}"/>
+                        <p:outputLabel value="Methode de conception" for="methodeconception" />
+                        <p:inputText id="methodeconception" value="#{pfeControleur.selected.methodeconception}"/>
+                        <p:outputLabel value="Langage de Programmation" for="langageprog" />
+                        <p:inputText id="langageprog" value="#{pfeControleur.selected.langageprog}" />
+                        <p:outputLabel value="Encadreur" for="encadreur" />
+                        <p:selectOneMenu id="encadreur" value="#{pfeControleur.selected.encadreur}" 
+                                         converter="genericConverter" >
+                            <f:selectItems value="#{enseignantControleur.listEnseignants}"
+                                           var="enseignant" itemLabel="#{enseignant.prenom} #{enseignant.nom}"
+                                           itemValue="#{enseignant}"/>
+                        </p:selectOneMenu>              
+                        <p:outputLabel value="Section" for="section" />
+                        <p:selectOneMenu id="section" value="#{pfeControleur.selected.section}"  
+                                          converter="genericConverter">                            
+                            <f:selectItems value="#{sectionControleur.sections}"
+                                           var="section" itemLabel="#{section.section}"
+                                           itemValue="#{section}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Etudiant 1" for="etudiant1" />
+                        <p:selectOneMenu id="etudiant1" value="#{pfeControleur.selected.etudiantByEtuCin}" 
+                                         converter="genericConverter">
+                            <f:selectItems value="#{etudiantControleur.etudiants}"
+                                           var="etudiant" itemLabel="#{etudiant.nomPrenom}"
+                                           itemValue="#{etudiant}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Etudiant 2" for="etudiant2" />
+                        <p:selectOneMenu id="etudiant2" value="#{pfeControleur.selected.etudiantByEtuCin1}" converter="genericConverter">
+                            <f:selectItem noSelectionOption="true" itemLabel="-------"/>
+                            <f:selectItems value="#{etudiantControleur.etudiants}"
+                                           var="etudiant" itemLabel="#{etudiant.nomPrenom}"
+                                           itemValue="#{etudiant}"/>
+                        </p:selectOneMenu>
+                        
+                        <p:outputLabel value="specialite" for="specialite" />
+                        <p:selectOneMenu id="specialite" value="#{pfeControleur.selected.specialite}" 
+                                         converter="genericConverter">
+                            <f:selectItems value="#{specialiteControleur.specialites}"
+                                           var="specialite" itemLabel="#{specialite.specialite}"
+                                           itemValue="#{specialite}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <div style="text-align: center">
+                    <p:commandButton  type="submit"  actionListener="#{pfeControleur.modifier}" value="modifier" update="display,:PfeListForm:datalist"
+                                     oncomplete="PfeEditDialog.hide()"/>
+                    <p:commandButton immediate="true" value="annuler" onclick="PfeEditDialog.hide()"/></div>
+                </h:panelGroup>
+                </p:fieldset>
+            </h:form>
+        </p:dialog>
+            </ui:define>         
+        </ui:composition>
+    </h:body>
+</html>
+

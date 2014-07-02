@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:h="http://java.sun.com/jsf/html"
+       xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:p="http://primefaces.org/ui">
+
+
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administratif.xhtml">
+            <ui:define name="title">
+                Supprimer Enseignant
+            </ui:define>
+            <ui:define name="center">
+                <h:form>
+                    <p:growl id="growl" showDetail="true" sticky="false" life="2000"/>
+
+                    <p:dataTable var="ens" value="#{enseignantControleur.listEnseignants}" id="tableau">
+                        <p:column headerText="CIN">
+
+                            <h:outputText value="#{ens.cinEnseignant}" id="cin"/>
+
+                        </p:column>
+                        <p:column headerText="Nom">
+
+                            <h:outputText value="#{ens.nom}" id="nom"/>
+
+                        </p:column>
+                        <p:column headerText="Prénom">
+
+                            <h:outputText value="#{ens.prenom}" id="prenom"/>
+
+                        </p:column>
+                        <p:column headerText="Grade">
+                            <h:outputText value="#{ens.grade.grade}"/>
+                        </p:column>
+                        <p:column headerText="Email">
+
+                            <h:outputText value="#{ens.mail}" id="mail"/>
+
+                        </p:column>
+                        <p:column headerText="Tel">
+
+                            <h:outputText value="#{ens.tel}" id="tel"/>
+
+                        </p:column>
+                        <p:column>
+                            <p:column>
+                                <p:commandButton icon="ui-icon-trash" title="supprimer" actionListener="#{enseignantControleur.supprimer()}" update="tableau"/>
+                            </p:column>
+                        </p:column>
+                    </p:dataTable>
+
+                </h:form>
+                <p:ajaxStatus id="ajaxStatusPanel">
+                    <f:facet name="start">
+                        <h:graphicImage value="../resources/img/ajax-loader.gif"/>
+                    </f:facet>
+                    <f:facet name="complete">
+                        <h:outputText value=""/>
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

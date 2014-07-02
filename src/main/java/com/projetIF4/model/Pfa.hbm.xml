@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 29 mars 2014 16:50:59 by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class catalog="pfa" name="com.projetIF4.model.Pfa" table="pfa">
+    <id name="codepfa" type="java.lang.Integer">
+      <column name="codepfa"/>
+      <generator class="identity"/>
+    </id>
+    <many-to-one class="com.projetIF4.model.Specialite" fetch="select" name="specialite">
+      <column name="specialite"/>
+    </many-to-one>
+    <many-to-one class="com.projetIF4.model.Enseignant" name="encardeur" fetch="join" lazy="false">
+      <column name="Encadreur_cin"/>
+    </many-to-one>
+    <many-to-one class="com.projetIF4.model.Salle" name="salle" fetch="join" lazy="false">
+      <column name="salle"/>
+    </many-to-one>
+    <many-to-one class="com.projetIF4.model.Etudiant" name="etudiantByEtuCin1" fetch="join" lazy="false">
+      <column name="Etu_cin1"/>
+    </many-to-one>
+    <many-to-one name="section" class="com.projetIF4.model.Section" fetch="join" lazy="false">
+            <column name="section" not-null="true" />
+        </many-to-one>
+    <many-to-one class="com.projetIF4.model.Etudiant" name="etudiantByEtuCin" fetch="join" lazy="false">
+      <column name="Etu_cin"/>
+    </many-to-one>
+    <property name="nomprojet" type="string">
+      <column length="254" name="nomprojet"/>
+    </property>
+    <property name="description" type="string">
+      <column length="254" name="description"/>
+    </property>
+    <property name="datesoutenance" type="timestamp">
+      <column length="19" name="datesoutenance"/>
+    </property>
+    <property name="dureesoutenance" type="string">
+      <column length="5" name="dureesoutenance"/>
+    </property>
+  </class>
+</hibernate-mapping>

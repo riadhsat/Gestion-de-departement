@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 29 mars 2014 16:50:59 by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="com.projetIF4.model.Pfe" table="pfe" catalog="pfa">
+        <id name="codepfe" type="java.lang.Integer">
+            <column name="codepfe" />
+            <generator class="identity"></generator>
+        </id>
+        <many-to-one name="specialite" class="com.projetIF4.model.Specialite" fetch="join" lazy="false">
+            <column name="specialite" />
+        </many-to-one>
+        <many-to-one name="encadreur" class="com.projetIF4.model.Enseignant" fetch="join" lazy="false">
+            <column name="Encadreur_cin" />
+        </many-to-one>
+        <many-to-one name="rapporteur" class="com.projetIF4.model.Enseignant" fetch="join" lazy="false">
+            <column name="Rapporteur_cin" />
+        </many-to-one>
+        <many-to-one name="chefjury" class="com.projetIF4.model.Enseignant" fetch="join" lazy="false">
+            <column name="ChefJury_cin" />
+        </many-to-one>
+        <many-to-one name="salle" class="com.projetIF4.model.Salle" fetch="join" lazy="false">
+            <column name="salle" />
+        </many-to-one>
+        <many-to-one name="etudiantByEtuCin1" class="com.projetIF4.model.Etudiant" fetch="join" lazy="false">
+            <column name="Etu_cin1" />
+        </many-to-one>
+        <many-to-one name="etudiantByEtuCin" class="com.projetIF4.model.Etudiant" fetch="join" lazy="false">
+            <column name="Etu_cin" />
+        </many-to-one>
+        <many-to-one name="section" class="com.projetIF4.model.Section" fetch="join" lazy="false">
+            <column name="section" not-null="true" />
+        </many-to-one>
+        <property name="nomprojet" type="string">
+            <column name="nomprojet" length="254" />
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="65535" />
+        </property>
+        <property name="datesoutenance" type="timestamp">
+            <column name="datesoutenance" length="19" />
+        </property>
+        <property name="dureesoutenance" type="string">
+            <column name="dureesoutenance" length="5" />
+        </property>
+        <property name="raisonSociale" type="string">
+            <column name="RaisonSociale" length="254" />
+        </property>
+        <property name="responsablesociete" type="string">
+            <column name="responsablesociete" length="254" />
+        </property>
+        <property name="adressesociete" type="string">
+            <column name="adressesociete" length="254" />
+        </property>
+        <property name="telsociete" type="java.lang.Integer">
+            <column name="telsociete" />
+        </property>
+        <property name="encadrantsociete" type="string">
+            <column name="encadrantsociete" length="254" />
+        </property>
+        <property name="fonctionencadrant" type="string">
+            <column name="fonctionencadrant" length="254" />
+        </property>
+        <property name="mailencadrant" type="string">
+            <column name="mailencadrant" length="254" />
+        </property>
+        <property name="telencadrant" type="java.lang.Integer">
+            <column name="telencadrant" />
+        </property>
+        <property name="methodeconception" type="string">
+            <column name="methodeconception" length="254" />
+        </property>
+        <property name="langageprog" type="string">
+            <column name="langageprog" length="254" />
+        </property>
+        <property name="outilsprog" type="string">
+            <column name="outilsprog" length="254" />
+        </property>
+        <property name="remuneration" type="java.lang.Boolean">
+            <column name="remuneration" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administratif.xhtml">
+            <ui:define name="title">
+                Gestion des sections
+            </ui:define>
+            <ui:define name="center">
+
+                <h:form id="form">
+                    <p:growl showDetail="true" autoUpdate="true" life="2000" id="growl"/>
+
+                    <p:commandButton style="float: right;" icon="ui-icon-plusthick"
+                                     actionListener="#{sectionControleur.ajouter}" value="Ajouter Section"/>
+
+                    <p:dataTable var="section" value="#{sectionControleur.sections}"
+                                 rowKey="#{section.codesec}" paginator="true" rows="10"
+                                 id="table_sections" emptyMessage="Aucune Section"
+                                 selectionMode="single" editable="true"
+                                 filteredValue="#{sectionControleur.filtredSections}">
+
+                        <p:ajax event="rowEdit" listener="#{sectionControleur.update}" update=":form:growl :form:table_sections" />
+                        <p:ajax event="rowEditCancel" listener="#{sectionControleur.cancelUpdate}" update=":form:growl" />
+
+                        <f:facet name="header">
+                            Liste des Sections
+                        </f:facet>
+
+                        <p:column headerText="Code Section" filterBy="codesec" sortBy="codesec">
+                            <h:outputText value="#{section.codesec}"/>
+                        </p:column>
+
+                        <p:column headerText="Section" filterBy="section">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{section.section}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText id="section" value="#{section.section}" validator="Nom de la section invalide">
+                                        <f:validateRegex pattern="[a-zA-Z0-9]*" for="section"/>
+                                        <f:validateLength minimum="1" for="section"/>
+                                        <p:ajax update="msgSec" event="keyup" />
+                                    </p:inputText>
+                                    <p:message for="section" id="msgSec"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="width: 6%;">
+                            <p:rowEditor/>
+                        </p:column>
+                        <p:column style="width: 6%;">
+                            <p:commandButton icon="ui-icon-trash" actionListener="#{sectionControleur.supprimer(section)}" update=":form:growl :form:table_sections"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

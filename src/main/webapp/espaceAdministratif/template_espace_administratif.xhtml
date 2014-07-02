@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <h:outputStylesheet name="css/style.css"/>
+            <title><ui:insert id="titre" name="title"/></title>
+        </h:head>
+
+        <h:body>
+            <p:layout fullPage="true">
+                <!-- haut de page -->
+                <p:layoutUnit position="north" styleClass="layout_north" size="100" resizable="false" closable="false" collapsible="true">
+                    <h:graphicImage value="/resources/img/logo_fst.png" id="logofst" alt="fst"/>
+                    <h:form id="user_panel">
+                        <h:panelGrid columns="2" cellpadding="1">
+                            <h:outputText value="Connecté en tant que :"/>
+                            <h:outputText style="text-transform: uppercase;font-size: larger;font-weight: bold" value="#{usersController.userLogin}"/>
+                            <!-- -->
+                            <p:commandButton value="Déconnecter" action="#{usersController.deconnect()}"
+                                               onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                        </h:panelGrid>
+                    </h:form>
+                </p:layoutUnit>
+
+                <!-- Menu -->
+                <p:layoutUnit position="west" styleClass="layout_west" size="200" collapsible="false">
+                    <h:form>
+                        <p:menu>
+                            <p:submenu label="Gestion des sections">
+                                <p:menuitem value="Gestion Section" action="pretty:GestionSections" />
+                            </p:submenu>
+                            <p:separator />
+                            <p:submenu label="Gestion des grades">
+                                <p:menuitem value="Gestion Grade" action="pretty:GestionGrades" />
+                            </p:submenu>
+                            <p:separator />
+                            <p:submenu label="Gestion des salles">
+                                <p:menuitem value="Gestion Salles" action="pretty:GestionSalles" />
+                            </p:submenu>
+                            <p:separator />
+                            <p:submenu label="Gestion des spécialités">
+                                <p:menuitem value="Gestion Spécialité" action="pretty:GestionSpecialites" />
+                            </p:submenu>
+                            <p:separator />
+                            <p:submenu label="Gestion des Enseignants">
+                                <p:menuitem value="Gestion Ensignants" action="pretty:GestionEnseignants" />
+                            </p:submenu>
+                            <p:separator />
+                            <p:submenu label="Gestion des Etudiants">
+                                <p:menuitem value="Gestion Etudiants" action="pretty:GestionEtudiants" />
+                            </p:submenu>
+                            <p:submenu label="Proposer projets">
+                                <p:menuitem value="Proposition Projets" action="pretty:ProposerProjets" />
+                            </p:submenu>
+                            <p:separator />
+                            <p:submenu label="Planning">
+                                <p:menuitem value="Plannification des projets" action="pretty:GestionPlanning"/>
+                            </p:submenu>
+                            <p:separator/>
+                            <p:submenu label="Modifier Compte">
+                                <p:menuitem value="Modifier les données personnelles" action="pretty:ModifierCompte" />
+                            </p:submenu>
+                        </p:menu>
+                    </h:form>
+                </p:layoutUnit>
+                <!-- Centre des pages -->
+                <p:layoutUnit styleClass="layout_center" position="center">
+                    <ui:insert name="script"/>
+                    <ui:insert name="center"/>
+                </p:layoutUnit>
+
+            </p:layout>
+            <pe:blockUI widgetVar="blockUIWidget">
+                <h:panelGrid columns="2">
+                    <h:graphicImage library="img" name="ajax-loader.gif"
+                                    style="margin-right: 12px; vertical-align: middle;"/>
+                    <h:outputText value="Veuiller Patienter..." style="white-space: nowrap;"/>
+                </h:panelGrid>
+            </pe:blockUI>
+        </h:body>
+
+    </f:view>
+</html>
+

@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:h="http://java.sun.com/jsf/html"
+       xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:p="http://primefaces.org/ui">
+
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administratif.xhtml">
+            <ui:define name="script">
+                <h:outputScript library="js" name="script.js" target="head"/>
+            </ui:define>
+            <ui:define name="title">
+                Planning des projets
+            </ui:define>
+            <ui:define name="center">
+                <h:form id="calendrier">
+                    <p:fieldset legend="Planning des projets" >
+                        <p:growl id="messages" showDetail="true" />  
+
+                        <p:schedule id="schedule" value="#{planningControleur.eventModel}" widgetVar="myschedule" locale="fr">  
+
+                            <p:ajax event="dateSelect" listener="#{planningControleur.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show()" />  
+                            <p:ajax event="eventSelect" listener="#{planningControleur.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show()" />  
+                            <p:ajax event="eventMove" listener="#{planningControleur.onEventMove}" update="messages" />  
+                            <p:ajax event="eventResize" listener="#{planningControleur.onEventResize}" update="messages" />  
+
+                        </p:schedule>  
+
+                        <p:dialog widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">  
+                            <h:panelGrid id="eventDetails" columns="2">  
+                                <h:outputLabel for="title" value="Title:" />  
+                                <p:inputText id="title" value="#{planningControleur.event.title}" required="true"/>  
+
+                                <h:outputLabel for="from" value="From:" />  
+                                <p:inputMask id="from" value="#{planningControleur.event.startDate}" mask="99/99/9999">  
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />  
+                                </p:inputMask>  
+
+                                <h:outputLabel for="to" value="To:" />  
+                                <p:inputMask id="to" value="#{planningControleur.event.endDate}" mask="99/99/9999">  
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />  
+                                </p:inputMask>  
+
+                                <h:outputLabel for="allDay" value="All Day:" />  
+                                <h:selectBooleanCheckbox id="allDay" value="#{planningControleur.event.allDay}" />  
+
+                                <p:commandButton type="reset" value="Reset" />  
+                                <p:commandButton id="addButton" value="Save" actionListener="#{planningControleur.addEvent}" oncomplete="PF('myschedule').update();PF('eventDialog').hide();"/>  
+                            </h:panelGrid>  
+                        </p:dialog>  
+                    </p:fieldset>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

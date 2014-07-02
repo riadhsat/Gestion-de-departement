@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administrateur.xhtml">
+            <ui:define name="title">
+                Exportation Par Enseignant
+            </ui:define>
+             <ui:define name="center">
+                 <h:form id="form" style=" margin-left: 210px; margin-right: auto;">
+                 <h:panelGrid columns="4" cellpadding="10" style="width: 700px;margin: auto;">
+                      <p:outputLabel for="enseignant" value="Exportation par Enseignant :"/>
+                     <p:selectOneMenu id="enseignant" value="#{exportControleur.enseignant}" 
+                                             converter="genericConverter" style="width: 150px">
+                                <f:ajax  render="@form"/>
+                                <f:selectItem itemLabel="selectionner un enseignant" itemValue="#{null}"/>
+                                <f:selectItems var="enseignant" value="#{enseignantControleur.listEnseignants}"
+                                               itemLabel="#{enseignant.nom} #{enseignant.prenom}" itemValue="#{enseignant}"/>
+                                <p:ajax update="projetpresident projetrapporteur projetencadreur"                                           
+                                        listener="#{exportControleur.afficheTablePFE}"
+                                        onstart="PF('blockUIWidget').block()"
+                                        oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:selectOneMenu>              
+                 
+                 </h:panelGrid>
+                     <p:dataTable id="projetpresident" var="pfe" value="#{exportControleur.pfespresident}"
+                                  paginator="true" rows="10" rowKey="#{pfe.codepfe}"
+                                  emptyMessage="Aucun projet" >
+                         <f:facet name="header">
+                             Liste des Projets   President : 
+                             <h:outputText value="  #{exportControleur.enseignant.nom} #{exportControleur.enseignant.prenom}" 
+                                           rendered="#{exportControleur.enseignant ne null}" />
+                        </f:facet>
+                         
+                          <p:column headerText="Date Soutenance" >                      
+                         <h:outputText value="#{pfe.datesoutenance}">
+                             <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                         </h:outputText>
+                        </p:column>
+                     <p:column headerText="Salle">
+                         <h:outputText value="#{pfe.salle.salle}"/>
+                        </p:column>
+                    <p:column headerText="Nom de projet" >
+                     <h:outputText value="#{pfe.nomprojet}"/>
+                        </p:column>
+                     <p:column headerText="Rapporteur">
+                         <h:outputText value="#{pfe.rapporteur.prenom} #{pfe.rapporteur.nom}"/>
+                        </p:column>
+                     <p:column headerText="Encadreur" >
+                         <h:outputText value="#{pfe.encadreur.prenom} #{pfe.encadreur.nom}"/>
+                        </p:column>
+                     <p:column headerText="Cin:Etudiant 1" >
+                         <h:outputText value="#{pfe.etudiantByEtuCin.cinetu}  #{pfe.etudiantByEtuCin.nomPrenom}"/>
+                        </p:column>
+                     <p:column headerText="Cin:Etudiant 2" >
+                         <h:outputText value="#{pfe.etudiantByEtuCin1.cinetu}  #{pfe.etudiantByEtuCin1.nomPrenom}"/>
+                        </p:column>
+                         
+                     </p:dataTable> 
+                     <br/>
+                     <p:dataTable id="projetrapporteur" var="pfe" value="#{exportControleur.pfesrapporteur}"
+                                  paginator="true" rows="10" rowKey="#{pfe.codepfe}"
+                                  emptyMessage="Aucun projet">
+                         <f:facet name="header">
+                             Liste des Projets   Rapporteur : 
+                             <h:outputText value="  #{exportControleur.enseignant.nom} #{exportControleur.enseignant.prenom}" 
+                                           rendered="#{exportControleur.enseignant ne null}" />
+                        </f:facet>
+                          <p:column headerText="Date Soutenance" >                      
+                          <h:outputText value="#{pfe.datesoutenance}">
+                             <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                         </h:outputText>
+                        </p:column>
+                     <p:column headerText="Salle" rendered="#{exportControleur.salle eq null}">
+                         <h:outputText value="#{pfe.salle.salle}"/>
+                        </p:column>
+                 <p:column headerText="Nom de projet" >
+                     <h:outputText value="#{pfe.nomprojet}"/>
+                        </p:column>
+                 <p:column headerText="President" >
+                     <h:outputText value="#{pfe.chefjury.prenom} #{pfe.chefjury.nom}"/>
+                        </p:column>
+                     <p:column headerText="Encadreur" >
+                         <h:outputText value="#{pfe.encadreur.prenom} #{pfe.encadreur.nom}"/>
+                        </p:column>
+                     <p:column headerText="Cin:Etudiant 1" >
+                         <h:outputText value="#{pfe.etudiantByEtuCin.cinetu}  #{pfe.etudiantByEtuCin.nomPrenom}"/>
+                        </p:column>
+                     <p:column headerText="Cin:Etudiant 2" >
+                         <h:outputText value="#{pfe.etudiantByEtuCin1.cinetu}  #{pfe.etudiantByEtuCin1.nomPrenom}"/>
+                        </p:column>
+                         
+                     </p:dataTable> 
+                     <br/>
+                     <p:dataTable id="projetencadreur" var="pfe" value="#{exportControleur.pfesencadreur}"
+                                   paginator="true" rows="10" rowKey="#{pfe.codepfe}"
+                                  emptyMessage="Aucun projet">                         
+                         <f:facet name="header">
+                             Liste des Projets   Encadreur : 
+                             <h:outputText value="   #{exportControleur.enseignant.nom} #{exportControleur.enseignant.prenom}" 
+                                           rendered="#{exportControleur.enseignant ne null}" />
+                        </f:facet>
+                          <p:column headerText="Date Soutenance" >                      
+                         <h:outputText value="#{pfe.datesoutenance}">
+                             <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                         </h:outputText>
+                        </p:column>
+                     <p:column headerText="Salle" rendered="#{exportControleur.salle eq null}">
+                         <h:outputText value="#{pfe.salle.salle}"/>
+                        </p:column>
+                 <p:column headerText="Nom de projet" >
+                     <h:outputText value="#{pfe.nomprojet}"/>
+                        </p:column>
+                 <p:column headerText="President" >
+                     <h:outputText value="#{pfe.chefjury.prenom} #{pfe.chefjury.nom}"/>
+                        </p:column>
+                     <p:column headerText="Rapporteur">
+                         <h:outputText value="#{pfe.rapporteur.prenom} #{pfe.rapporteur.nom}"/>
+                        </p:column>
+                     <p:column headerText="Cin:Etudiant 1" >
+                         <h:outputText value="#{pfe.etudiantByEtuCin.cinetu}  #{pfe.etudiantByEtuCin.nomPrenom}"/>
+                        </p:column>
+                     <p:column headerText="Cin:Etudiant 2" >
+                         <h:outputText value="#{pfe.etudiantByEtuCin1.cinetu}  #{pfe.etudiantByEtuCin1.nomPrenom}"/>
+                        </p:column>
+                     </p:dataTable> 
+                     
+                     <p:panel header="Exporter en PDF et Excel">
+                        <p:commandLink id="pdf" ajax="false">
+                            <p:graphicImage value="/resources/img/pdf.png"/>
+                            <pe:exporter type="pdf" target="projetpresident,projetrapporteur,projetencadreur" 
+                                         fileName="Planning #{exportControleur.enseignant.nom} #{exportControleur.enseignant.prenom}" 
+                                         datasetPadding="3" orientation="Landscape"
+                                         facetBackground="#fffff6" facetFontSize="10" facetFontColor="#171ef8" facetFontStyle="BOLD"  
+                     cellFontColor="#000000" cellFontSize="9" cellFontStyle="NORMAL"/>
+                        </p:commandLink>
+                        <p:spacer width="20"/>
+                        <p:commandLink id="xlsx" ajax="false">
+                            <p:graphicImage value="/resources/img/excel.png"/>
+                            <pe:exporter type="xls" target="projetpresident,projetrapporteur,projetencadreur" 
+                                         tableTitle="Planning #{exportControleur.enseignant.nom} #{exportControleur.enseignant.prenom}" 
+                                         fileName="Planning #{exportControleur.enseignant.nom} #{exportControleur.enseignant.prenom}"
+                                         />
+                        </p:commandLink>
+                    </p:panel>          
+                 </h:form>
+            </ui:define>
+            </ui:composition>
+    </h:body>
+</html>
+

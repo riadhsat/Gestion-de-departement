@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_etudiant.xhtml">
+            <ui:define name="title">
+                Projets Proposés
+            </ui:define>
+
+
+            <ui:define name="center">
+                <h:form id="form_choix">
+                    <p:growl id="growl" autoUpdate="true" showDetail="true" life="3000"/>
+
+                    <p:dataGrid id="projets_prop_pan" value="#{projetProposeControleur.projets}" var="projet"
+                                paginator="true" lazy="true" paginatorPosition="top" rows="5" emptyMessage="Pas de projets"
+                                paginatorTemplate="{PreviousPageLink} {PageLinks} {NextPageLink}">
+                        <p:column>
+                            <p:panel id="pnl" styleClass="drag" header="#{projet.nomProjet}">
+                                <p:commandLink oncomplete="dlg.show()" immediate="true" update=":detail_proj"
+                                               title="Détails du projet">
+                                    <h:outputText value="#{projet.description}"/>
+                                    <f:setPropertyActionListener value="#{projet}"
+                                                                 target="#{projetProposeControleur.projetPropose}"/>
+                                </p:commandLink>
+                            </p:panel>
+                            <p:draggable for="pnl" dragOnly="false" revert="true" zindex="99"/>
+                        </p:column>
+                    </p:dataGrid>
+                </h:form>
+
+                <p:dialog id="detail_proj" header="Détails du projet" modal="true"
+                          appendTo="@(body)" closeOnEscape="true" width="600" height="400"
+                          draggable="false" widgetVar="dlg" dynamic="true" >
+                    <div align="center">
+                        <h:form>
+                            <h:panelGrid columns="2" cellpadding="15" cellspacing="10" width="500px">
+
+                                <p:outputLabel for="nom_projet" value="Nom du projet"/>
+                                <h:outputText id="nom_projet"  value="#{projetProposeControleur.projetPropose.nomProjet}"/>
+
+                                <p:outputLabel for="decription" value="Description du projet"/>
+                                <h:outputText id="decription" value="#{projetProposeControleur.projetPropose.description}"/>
+
+                                <p:outputLabel for="lang" value="Langage de programmation"/>
+                                <h:outputText id="lang" value="#{projetProposeControleur.projetPropose.langageprog}"/>
+
+                                <p:outputLabel for="propose_par" value="Proposé par"/>
+                                <p:column>
+                                    <h:outputText id="propose_par" value="#{projetProposeControleur.projetPropose.proposePar eq 'enseignant' ? projetProposeControleur.projetPropose.encadreur.nom.toUpperCase() : projetProposeControleur.projetPropose.proposePar.toUpperCase() }" />
+                                    <h:outputText value=" #{projetProposeControleur.projetPropose.encadreur.prenom.toUpperCase()}"
+                                                  rendered="#{projetProposeControleur.projetPropose.encadreur ne null}"/>
+                                </p:column>
+                            </h:panelGrid>
+                            <br/>
+                            <p:commandButton value="Confirmer modifications" ajax="false"
+                                             oncomplete="dlg.hide()" />
+                        </h:form>
+                    </div>
+
+                </p:dialog>
+
+                <h:form style="float: right;position: relative">
+                    <p:orderList id="list_choix" styleClass="list_choix" value="#{projetProposeControleur.projetsChoisis}" var="pro_choix"
+                                 itemValue="#{pro_choix}" converter="genericConverter">
+                        <f:facet name="caption">Choix Projets</f:facet>
+                        <p:column>
+                            <h:outputText value="#{projetProposeControleur.projetsChoisis.indexOf(pro_choix)+1}"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{pro_choix.nomProjet}"/>
+                        </p:column>
+
+                    </p:orderList>
+                    <p:droppable accept=".drag" for="list_choix"
+                                 datasource=":form_choix:projets_prop_pan"
+                                 activeStyleClass="ui-state-highlight" >
+                        <p:ajax onstart="handleDrop" oncomplete="reactiver" immediate="true" async="true" event="drop" listener="#{projetProposeControleur.choisirProjet}" process="@this"
+                                update="list_choix :form_choix:growl :form_choix:projets_prop_pan"/>
+                    </p:droppable>
+
+                    <p:commandButton action="#{mailControleur.envoyerMail()}" value="Envoyer mail" update=":form_choix:growl"  onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+
+                </h:form>
+
+                <h:outputScript target="head">
+                    function handleDrop(event,ui)
+                    {
+                    var draggable = ui.draggable;
+                    draggable.fadeOut();
+                    }
+                    function reactiver()
+                    {
+                        $( this ).droppable( "option", "disabled", true );
+                    }
+                </h:outputScript>
+
+            </ui:define>
+
+        </ui:composition>
+    </h:body>
+</html>
+

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 16 avr. 2014 11:44:53 by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="com.projetIF4.model.Notification" table="notification" catalog="pfa">
+        <id name="idNotif" type="java.lang.Integer">
+            <column name="id_notif" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="utilisateur" class="com.projetIF4.model.Utilisateur" fetch="join">
+            <column name="utilisateur" not-null="true" />
+        </many-to-one>
+        <property name="titre" type="string">
+            <column name="titre" not-null="true" />
+        </property>
+        <property name="message" type="string">
+            <column name="message" length="65535" not-null="true" />
+        </property>
+        <property name="dateEnvoi" type="date">
+            <column name="date_envoi" length="10" not-null="true" />
+        </property>
+        <property name="etat" type="string">
+            <column name="etat" length="6" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pretty-config xmlns="http://ocpsoft.com/prettyfaces/3.3.3"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://ocpsoft.com/prettyfaces/3.3.3
+                                http://ocpsoft.com/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.3.3.xsd">
+    <url-mapping id="Index">
+        <pattern value="/"/>
+        <view-id value="/index.xhtml"/>
+    </url-mapping>
+    <url-mapping id="AdminIndex">
+        <pattern value="/Espace_Administrateur/"/>
+        <view-id value="/espaceAdministrateur/index.xhtml"/>
+    </url-mapping>
+    <url-mapping id="AdministratifIndex">
+        <pattern value="/Espace_Administratif/"/>
+        <view-id value="/espaceAdministratif/index.xhtml"/>
+    </url-mapping>
+    <url-mapping id="EnseignantIndex">
+        <pattern value="/Espace_Enseignant/"/>
+        <view-id value="/espaceEnseignant/index.xhtml"/>
+    </url-mapping>
+    <url-mapping id="EtudiantIndex">
+        <pattern value="/Espace_Etudiant/"/>
+        <view-id value="/espaceEtudiant/index.xhtml"/> 
+    </url-mapping>
+
+    <url-mapping id="AdminGestionEnseignants">
+        <pattern value="/Espace_Administrateur/Enseignants"/>
+        <view-id value="/espaceAdministrateur/gestionEnseignants.xhtml"/>
+    </url-mapping>
+    
+    <url-mapping id="AdminGestionPFE">
+        <pattern value="/Espace_Administrateur/GestionPFE"/>
+        <view-id value="/espaceAdministrateur/GestionPFE.xhtml"/>
+    </url-mapping>
+    
+    <url-mapping id="AdminGestionPFA">
+        <pattern value="/Espace_Administrateur/GestionPFA"/>
+        <view-id value="/espaceAdministrateur/GestionPFA.xhtml"/>
+    </url-mapping>
+    
+    <url-mapping id="AdminGestionEtudiants">
+        <pattern value="/Espace_Administrateur/Etudiants"/>
+        <view-id value="/espaceAdministrateur/gestionEtudiants.xhtml"/>
+    </url-mapping>
+    <url-mapping id="AdminGestionGrades">
+        <pattern value="/Espace_Administrateur/Grades"/>
+        <view-id value="/espaceAdministrateur/gestionGrades.xhtml"/>
+    </url-mapping>
+    <url-mapping id="AdminGestionPlanningPFE">
+        <pattern value="/Espace_Administrateur/PlanningPFE"/>
+        <view-id value="/espaceAdministrateur/gestionPlanningPfe.xhtml"/>
+    </url-mapping>
+    <url-mapping id="AdminExportationParSalle">
+        <pattern value="/Espace_Administrateur/ExportationParSalle"/>
+        <view-id value="/espaceAdministrateur/ExportSalle.xhtml"/>
+    </url-mapping>
+    <url-mapping id="AdminExportationParEnseignant">
+        <pattern value="/Espace_Administrateur/ExportationParEnseignant"/>
+        <view-id value="/espaceAdministrateur/ExportEnseignant.xhtml"/>
+    </url-mapping>
+    
+    <url-mapping id="AdminGestionPlanningPFA">
+        <pattern value="/Espace_Administrateur/PlanningPFA"/>
+        <view-id value="/espaceAdministrateur/gestionPlanningPfa.xhtml"/>
+    </url-mapping>
+    <url-mapping id="AdminGestionSalles">
+        <pattern value="/Espace_Administrateur/Salles"/>
+        <view-id value="/espaceAdministrateur/gestionSalles.xhtml"/>
+    </url-mapping>
+    <url-mapping id="AdminGestionSpecialites">
+        <pattern value="/Espace_Administrateur/Specialites"/>
+        <view-id value="/espaceAdministrateur/gestionSpecialites.xhtml"/>
+    </url-mapping>
+    <url-mapping id="AdminGestionSections">
+        <pattern value="/Espace_Administrateur/Sections"/>
+        <view-id value="/espaceAdministrateur/gestionSections.xhtml"/>
+    </url-mapping>
+    <url-mapping id="AdminGestionUtilisateurs">
+        <pattern value="/Espace_Administrateur/Utilisateurs"/>
+        <view-id value="/espaceAdministrateur/gestionUtilisateurs.xhtml"/>
+    </url-mapping>
+    <url-mapping id="AdminModifierCompte">
+        <pattern value="/Espace_Administrateur/Compte"/>
+        <view-id value="/espaceAdministrateur/modifier_compte.xhtml"/>
+    </url-mapping>
+
+
+    <url-mapping id="GestionEnseignants">
+        <pattern value="/Espace_Administratif/Enseignants"/>
+        <view-id value="/espaceAdministratif/gestionEnseignants.xhtml"/>
+    </url-mapping>
+    <url-mapping id="GestionEtudiants">
+        <pattern value="/Espace_Administratif/Etudiants"/>
+        <view-id value="/espaceAdministratif/gestionEtudiants.xhtml"/>
+    </url-mapping>
+    <url-mapping id="GestionGrades">
+        <pattern value="/Espace_Administratif/Grades"/>
+        <view-id value="/espaceAdministratif/gestionGrades.xhtml"/>
+    </url-mapping>
+    <url-mapping id="GestionPlanning">
+        <pattern value="/Espace_Administratif/Planning"/>
+        <view-id value="/espaceAdministratif/gestionPlanning.xhtml"/>
+    </url-mapping>
+    <url-mapping id="ProposerProjets">
+        <pattern value="/Espace_Administratif/Projets"/>
+        <view-id value="/espaceAdministratif/proposer_projet.xhtml"/>
+    </url-mapping>
+    <url-mapping id="GestionSalles">
+        <pattern value="/Espace_Administratif/Salles"/>
+        <view-id value="/espaceAdministratif/gestionSalles.xhtml"/>
+    </url-mapping>
+    <url-mapping id="GestionSpecialites">
+        <pattern value="/Espace_Administratif/Specialites"/>
+        <view-id value="/espaceAdministratif/gestionSpecialites.xhtml"/>
+    </url-mapping>
+    <url-mapping id="GestionSections">
+        <pattern value="/Espace_Administratif/Sections"/>
+        <view-id value="/espaceAdministratif/gestionSections.xhtml"/>
+    </url-mapping>
+    <url-mapping id="ModifierCompte">
+        <pattern value="/Espace_Administratif/Compte"/>
+        <view-id value="/espaceAdministratif/modifier_compte.xhtml"/>
+    </url-mapping>
+
+
+
+    <url-mapping id="EnsAccepterEncadrement">
+        <pattern value="/Espace_Enseignant/Encadrement"/>
+        <view-id value="/espaceEnseignant/accepter_encadrement.xhtml"/>
+    </url-mapping>
+    <url-mapping id="EnsConsulterMessages">
+        <pattern value="/Espace_Enseignant/Consulter_Messages"/>
+        <view-id value="/espaceEnseignant/consulter_messages.xhtml"/>
+    </url-mapping>
+    <url-mapping id="EnsEnvoyerMessage">
+        <pattern value="/Espace_Enseignant/Envoyer_Message"/>
+        <view-id value="/espaceEnseignant/envoyer_message.xhtml"/>
+    </url-mapping>
+    <url-mapping id="EnsModifierCompte">
+        <pattern value="/Espace_Enseignant/Compte"/>
+        <view-id value="/espaceEnseignant/modifier_compte.xhtml"/>
+    </url-mapping>
+    <url-mapping id="EnsPlanning">
+        <pattern value="/Espace_Enseignant/Planning"/>
+        <view-id value="/espaceEnseignant/planning_projets.xhtml"/>
+    </url-mapping>
+    <url-mapping id="EnsProposerProjet">
+        <pattern value="/Espace_Enseignant/Proposition_Projets"/>
+        <view-id value="/espaceEnseignant/proposer_projet.xhtml"/>
+    </url-mapping>
+    <url-mapping id="EnsValiderProjet">
+        <pattern value="/Espace_Enseignant/Validation_Projets"/>
+        <view-id value="/espaceEnseignant/valider_projets.xhtml"/>
+    </url-mapping>
+
+
+
+    <url-mapping id="EtuConsulterMessages">
+        <pattern value="/Espace_Etudiant/Consulter_Messages"/>
+        <view-id value="/espaceEtudiant/consulter_messages.xhtml"/>
+    </url-mapping>
+    <url-mapping id="EtuConsulterProjets">
+        <pattern value="/Espace_Etudiant/Consulter_Projets"/>
+        <view-id value="/espaceEtudiant/consulter_projets.xhtml"/>
+    </url-mapping>
+    <url-mapping id="EtuProjetsProposes">
+        <pattern value="/Espace_Etudiant/Projets_Proposes"/>
+        <view-id value="/espaceEtudiant/projets_proposes.xhtml"/>
+    </url-mapping>
+    <url-mapping id="EtuProposerProjet">
+        <pattern value="/Espace_Etudiant/Proposer_Projet"/>
+        <view-id value="/espaceEtudiant/proposer_projet.xhtml"/>
+    </url-mapping>
+    <url-mapping id="EtuModifierCompte">
+        <pattern value="/Espace_Etudiant/Compte"/>
+        <view-id value="/espaceEtudiant/modifier_compte.xhtml"/>
+    </url-mapping>
+
+
+
+
+
+
+</pretty-config>

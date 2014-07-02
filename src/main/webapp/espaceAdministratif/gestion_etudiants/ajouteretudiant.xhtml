@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:h="http://java.sun.com/jsf/html"
+       xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:p="http://primefaces.org/ui">
+
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administratif.xhtml">
+            <ui:define name="title">
+                Ajouter Etudiant
+            </ui:define>
+            <ui:define name="center">
+
+                <h:form enctype="multipart/form-data" id="formupload">
+                    <p:fieldset legend="Imporatation à partir d'un fichier Excell" >
+                        <!-- pour les notifs -->
+                        <p:growl id="growl1" showDetail="true" autoUpdate="true" sticky="false" life="2000"/>
+                        <h:panelGrid id="grid" columns="3" cellpadding="5">  
+                            <p:fileUpload id="upload" value="#{fichierEtudiantUpload.file}" mode="simple"/>  
+                            <p:message for="upload" id="msgUpload"/>
+
+                        </h:panelGrid>
+                        <div align="center">
+                            <p:commandButton value="Ajouter" ajax="false" action="#{fichierEtudiantUpload.upload()}" update="growl,msgUpload"/>
+                        </div>
+                    </p:fieldset>
+                </h:form>
+                <h:form id="formajoutetudiant">
+                    <p:fieldset legend="Ajout Manuel d'étudiants">
+                        <!-- pour les notifs -->
+                    <p:growl id="growl2" showDetail="true" autoUpdate="true" sticky="false" life="2000"/>
+                        <h:panelGrid id="grid2" columns="3" cellpadding="5">
+                            <p:outputLabel for="cin" value="CIN"/>
+                            <p:inputText id="cin" value="#{etudiantControleur.cinetu}">
+                                <p:ajax update="msgCin" event="keyup"/>
+                            </p:inputText>
+                            <p:message for="cin" id="msgCin"/>
+
+                            <p:outputLabel for="ins" value="Numéro d'inscription"/>
+                            <p:inputText id="ins" value="#{etudiantControleur.ins}">
+                                <p:ajax update="msgIns" event="keyup"/>
+                            </p:inputText>
+                            <p:message for="ins" id="msgIns"/>
+
+                            <p:outputLabel for="nom" value="Nom et prénom"/>
+                            <p:inputText id="nom" value="#{etudiantControleur.nomPrenom}">
+                                <p:ajax update="msgNom" event="keyup"/>
+                            </p:inputText>
+                            <p:message for="nom" id="msgNom"/>
+
+                            <p:outputLabel for="section" value="Section"/>
+                            <p:selectOneMenu id="section" value="#{etudiantControleur.ssection}">
+                                <f:selectItems value="#{sectionControleur.itemSections}"/>
+                            </p:selectOneMenu>
+                            <!-- comment -->
+                            <p:outputLabel for="specialite" value="Spécialité"/>
+                            <p:selectOneMenu id="specialite" value="#{etudiantControleur.sspecialite}">
+                                <f:selectItems value="#{specialiteControleur.itemSpecialites}"/>
+                            </p:selectOneMenu>  
+                            <!-- comment -->
+
+                            <h:outputText value="Date de naissance"/>
+                            <h:inputText id="popupDate" value="#{etudiantControleur.datenaissance}">
+                                <f:convertDateTime pattern="d/M/yyyy"/>
+                            </h:inputText>
+                            <!--<p:message for="popupButtonDate" id="msgDN"/>-->
+
+                            <p:outputLabel for="mail" value="Adresse mail"/>
+                            <p:inputText id="mail" value="#{etudiantControleur.mail}">
+                                <p:ajax update="msgMail" event="keyup"/>
+                            </p:inputText>
+                            <p:message for="mail" id="msgMail"/>
+
+                        </h:panelGrid>
+
+                        <div align="center">
+                            <p:commandButton value="Ajouter étudiant" ajax="true" action="#{etudiantControleur.ajouter()}" update="grid2,growl2"/>
+                        </div>
+                    </p:fieldset>
+
+                </h:form>
+                <p:ajaxStatus id="ajaxStatusPanel">
+                    <f:facet name="start">
+                        <h:graphicImage value="../resources/img/ajax-loader.gif"/>
+                    </f:facet>
+                    <f:facet name="complete">
+                        <h:outputText value=""/>
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>

@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administratif.xhtml">
+            <ui:define name="title">
+                Gestion des salles
+            </ui:define>
+            <ui:define name="center">
+
+                <h:form id="form">
+                    <p:growl showDetail="true" autoUpdate="true" life="2000" id="growl"/>
+                    <p:commandButton style="float: right;" icon="ui-icon-plusthick"
+                                     actionListener="#{salleControleur.ajouter}" value="Ajouter Salle"/>
+
+
+                    <p:dataTable var="salle" value="#{salleControleur.salles}"
+                                 rowKey="#{salle.codesal}" paginator="true" rows="10"
+                                 id="table_salles" emptyMessage="Aucune Salle"
+                                 selectionMode="single" editable="true"
+                                 filteredValue="#{salleControleur.filtredSalles}">
+
+                        <p:ajax event="rowEdit" listener="#{salleControleur.update}" update=":form:growl :form:table_salles" />
+                        <p:ajax event="rowEditCancel" listener="#{salleControleur.cancelUpdate}" update=":form:growl" />
+
+                        <f:facet name="header">
+                            Liste des Salles
+                        </f:facet>
+
+                        <p:column headerText="Code Salle" filterBy="codesal" sortBy="codesal">
+                            <h:outputText value="#{salle.codesal}"/>
+                        </p:column>
+
+                        <p:column headerText="Salle" filterBy="salle">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{salle.salle}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText id="salle" value="#{salle.salle}" validatorMessage="Nom de salle invalide">
+                                        <f:validateRegex pattern="[a-zA-Z0-9]*" for="salle"/>
+                                        <f:validateLength minimum="1" for="salle"/>
+                                        <p:ajax update="msgsalle" event="keyup" />
+                                    </p:inputText>
+                                    <p:message for="salle" id="msgsalle"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="width: 6%;">
+                            <p:rowEditor/>
+                        </p:column>
+                        <p:column style="width: 6%;">
+                            <p:commandButton icon="ui-icon-trash" actionListener="#{salleControleur.supprimer(salle)}" update=":form:growl :form:table_salles"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

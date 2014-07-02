@@ -1,0 +1,120 @@
+/* 
+    Created on : 22 mars 2014, 19:07:26
+    Author     : Moez-pc
+*/
+
+body{
+    /*    background: white url(../img/grey_banner.png) no-repeat 50% 50%;
+        background-size: 180% 180%;*/
+    background-color: rgba(186,186,186,.2);
+}
+
+#user_panel{
+    margin: 10px 10px auto auto;
+    width: 350px;
+    height: 60px;
+    /*    border-radius: 5px;
+        background-color: rgba(186,186,186,.5);
+        box-shadow: 1px 1px 12px #666;*/
+}
+img#logofst{
+    margin: 5px auto 5px 15px;
+    width: 180px;
+    height: 80px;
+    float: left;
+    /*box-shadow: 1px 1px 12px #666;*/
+}
+.layout_north .ui-layout-unit-content{
+    /*background-image: url(../img/grey_banner.png);*/
+    /*background:   no-repeat 50% 50%;*/
+    background-color: rgba(186,186,186,.2) ;
+    /*background-size: 90% 10%;*/
+    padding: 2px auto;
+    overflow: visible;
+    z-index: 20; 
+}
+.layout_south .ui-layout-unit-content{
+    background: url(../img/grey_banner.png) no-repeat 50% 50%;
+    background-size: 110% 110%;
+}
+.ui-widget {
+    font-size: 12px;
+}
+.ui-widget-header {
+    text-align: center;
+    text-transform: uppercase;
+}
+.ui-button {
+    margin-top: 10px;
+}
+.layout_center .ui-layout-unit-content {
+    text-align: center;
+}
+
+.layout_center .ui-layout-unit-content form {
+    /*width: 570px;*/
+    position: absolute;
+    margin-left: 20px;
+    margin-top: 30px;
+}
+.layout_center .ui-layout-unit-content form#choixEns{
+   position: absolute;
+    margin-left: 50px;
+    margin-top: 1px;
+}
+
+.layout_center .ui-layout-unit-content form#formajoutetudiant{
+    position: absolute;
+    margin-left: 100px;
+    margin-top: 30px;
+}
+.layout_west .ui-layout-unit-content * {
+    width: 200px;
+    padding: 0;
+    text-align: center;
+}
+.layout_west .ui-layout-unit-content form,.layout_east .ui-layout-unit-content form{
+    width: 170px;
+}
+.layout_east .ui-layout-unit-content *{
+    width: 200px;
+}
+#ajaxStatusPanel{
+    width: 50%;
+    margin: 200px auto;
+}
+#calendrier {
+    width: 800px;
+    margin-left: 20px;
+    margin-top: 30px;
+    float: left;
+}
+
+#form_projets{
+    padding: 5px;
+    margin-right: 10px;
+    margin-top: 25px;
+}
+form#form_projets{
+    position: relative;
+    float: right;
+}
+
+.projet{
+    background-color: red;
+}
+#form_propose_ens{
+    width: 500px;
+    position: relative;
+    margin: 100px auto;
+}
+#num_choix{
+    position: relative;
+    margin: 100px auto;
+}
+.ui-picklist .ui-picklist-list {
+    height: 600px;
+    margin: 0;
+    overflow: auto;
+    padding: 0;
+}

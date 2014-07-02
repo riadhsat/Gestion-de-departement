@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administrateur.xhtml">
+            <ui:define name="title">
+                Gestion des utilisateurs
+            </ui:define>
+            <ui:define name="center">
+
+                <h:form id="form" style=" margin-left: 210px; margin-right: auto;">
+                    <p:growl showDetail="true" autoUpdate="true" life="2000" id="growl"/>
+
+                    <p:commandButton style="float: right;" icon="ui-icon-plusthick" update=":adduser"
+                                     actionListener="#{usersController.prepareCreate}"
+                                     value="Ajouter Utilisateur" oncomplete="PF('dlgadd').show()"/>
+
+                    <p:dataTable id="table_utilisateurs" var="utilisateur" value="#{usersController.listUtilisateur}"
+                                 rowKey="#{utilisateur.cin}" paginator="true" rows="8"
+                                  emptyMessage="Aucune Utilisateurs"
+                                 selectionMode="single" 
+                                 filteredValue="#{usersController.filtredUtilisateur}">                        
+
+                        <p:ajax event="rowSelect"    update="deleteButton EditButton" />
+                        <p:ajax event="rowUnselect"  update="deleteButton EditButton" />
+
+                        <f:facet name="header">
+                            Liste des Utilisateurs
+                        </f:facet>
+
+                        <p:column headerText="CIN Utilisateurs" filterBy="cin" sortBy="cin">
+                            <f:facet name="header">
+                                <h:outputText value="CIN"/>
+                            </f:facet>
+                            <h:outputText value="#{utilisateur.cin}"/>
+                        </p:column>
+
+                        <p:column filterBy="login">      
+                            <f:facet name="header">
+                                    <h:outputText value="Nom d'utilisateur" />
+                            </f:facet>
+                            <h:outputText value="#{utilisateur.login}" />
+                        </p:column>
+                        <p:column filterBy="type">                            
+                                <f:facet name="header">
+                                    <h:outputText value="Type"/>
+                                </f:facet>  
+                                <h:outputText value="#{utilisateur.type}"/>
+                        </p:column> 
+                        <p:column style="width: 6%;">
+                            <p:commandButton id="EditButton" icon="ui-icon-pencil" immediate="true"
+                                             update="table_utilisateurs :edituser"
+                                             oncomplete="PF('dlgEdit').show()">
+                                <f:setPropertyActionListener value="#{utilisateur}"
+                                                             target="#{usersController.newutilisateur}" />
+                            </p:commandButton>
+                        </p:column>
+                        <p:column style="width: 6%;">
+                            <p:commandButton id="deleteButton" icon="ui-icon-trash" update="table_utilisateurs"
+                                             actionListener="#{usersController.supprimer(utilisateur)}"  />
+                        </p:column>
+                        
+                    </p:dataTable>
+                </h:form>
+
+                <p:dialog id="adduser" header="Ajouter Utilisateur" modal="true" 
+                          appendTo="@(body)" dynamic="true" resizable="false"
+                          width="400" height="300" draggable="false" widgetVar="dlgadd" closable="true">
+                    <p:fieldset legend="Informations">
+                        <h:form>
+                            <h:panelGrid columns="2" cellpadding="10" cellspacing="5">
+                                <p:outputLabel value="CIN :" for="cin"/>
+                                <p:inputText id="cin" placeholder="Entrer le cin de l'utilisateur" 
+                                             validatorMessage="Entrer un CIN valide" value="#{usersController.newutilisateur.cin}" >
+                                <f:validateLongRange  minimum="1000000" maximum="99999999" for="cin"/>
+                                <p:ajax  event="keyup" />
+                            </p:inputText>
+                            
+                            <p:outputLabel value="Nom d'utilisateur" for="nom"/>
+                            <p:inputText id="nom" value="#{usersController.newutilisateur.login}" 
+                                         required="true" validatorMessage="Entrer un nom d'utilisateur"/>                  
+                           
+                            <p:outputLabel value="Mote de passe :" for="pass"/>
+                            <p:password id="pass" placeholder="Enter un Mot de passe :" match="pass2"
+                                        required="true" requiredMessage="saisie un mot de passe"
+                                        value="#{usersController.newutilisateur.pass}"
+                                        validatorMessage="Les mots de passe ne sont pas identiques"/>
+                           
+                            <p:outputLabel value="Retapez le mot de passe :" for="pass2"/>
+                            <p:password id="pass2" placeholder="Tapez ici" 
+                                        value="#{usersController.newutilisateur.pass}"
+                                        />                                
+                            </h:panelGrid>
+                            <div style="text-align: center">
+                            <p:commandButton  value="Ajouter"  actionListener="#{usersController.add}" 
+                                              update=":form:table_utilisateurs" />
+                            <p:commandButton immediate="true" value="Annuler" onstart="PF('dlgadd').hide()"
+                                             actionListener="#{usersController.afficheMsgAnnuler}"  />
+                            </div>
+                        </h:form>
+                        </p:fieldset>
+                </p:dialog>
+                 <p:dialog id="edituser" header="Modifier Utilisateur" modal="true" 
+                          appendTo="@(body)" dynamic="true" resizable="false"
+                          width="400" height="250" draggable="false" widgetVar="dlgEdit" closable="false">
+                    <p:fieldset legend="Informations">
+                        <h:form>
+                            <h:panelGrid columns="2" cellpadding="10" cellspacing="5">
+                            
+                            <p:outputLabel value="Nom d'utilisateur" for="nom"/>
+                            <p:inputText id="nom" value="#{usersController.newutilisateur.login}" 
+                                         required="true" validatorMessage="Entrer un nom d'utilisateur"/>                  
+                           
+                            <p:outputLabel value="Mote de passe :" for="pass"/>
+                            <p:password id="pass" placeholder="Enter un Mot de passe :" match="pass2"
+                                        required="true" requiredMessage="saisie un mot de passe"
+                                        value="#{usersController.newutilisateur.pass}"
+                                        validatorMessage="Les mots de passe ne sont pas identiques"/>
+                           
+                            <p:outputLabel value="Retapez le mot de passe :" for="pass2"/>
+                            <p:password id="pass2" placeholder="Tapez ici" 
+                                        value="#{usersController.newutilisateur.pass}"
+                                        />                                
+                            </h:panelGrid>
+                            <div style="text-align: center">
+                            <p:commandButton  value="Modifier"  actionListener="#{usersController.edit}" 
+                                              update=":form:table_utilisateurs" />
+                            <p:commandButton immediate="true" value="Annuler" oncomplete="PF('dlgEdit').hide()" 
+                                             actionListener="#{usersController.annuler}" update=":form:table_utilisateurs"/>
+                            </div>
+                        </h:form>
+                        </p:fieldset>
+                </p:dialog>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

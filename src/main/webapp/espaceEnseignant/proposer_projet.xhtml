@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head/>
+
+    <h:body>
+        <ui:composition template="template_espace_enseignant.xhtml">
+            <ui:define name="title">
+                Espace Enseignant | Proposer Projet
+            </ui:define>
+            <ui:define name="center">
+                <h:form id="form_propose_ens">
+                    <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />
+                    <div align="center">
+                        <p:panel header="Proposer Projet">
+                            <h:panelGrid columns="3" cellpadding="10">
+
+                                <p:outputLabel for="section" value="Section"/>
+                                <p:selectOneMenu id="section" style="width: 100px" 
+                                                 value="#{projetProposeControleur.projetPropose.section}"
+                                                 converter="genericConverter">
+                                    <f:selectItems value="#{sectionControleur.sections}" var="section"
+                                                   itemLabel="#{section.section}" itemValue="#{section}"/>
+                                    <f:validateRequired for="section"/>
+                                    <p:ajax event="valueChange" update="msgSec"/>
+                                </p:selectOneMenu>
+                                <p:message for="section" id="msgSec"/>
+
+
+                                <p:outputLabel for="nom_projet" value="Nom du projet"/>
+                                <h:inputText id="nom_projet" value="#{projetProposeControleur.projetPropose.nomProjet}" validatorMessage="Nom du projet invalide">
+                                    <f:validateRegex pattern="[A-Za-z].*"/>
+                                    <p:ajax event="keyup" update="msgNom"/>
+                                </h:inputText>
+                                <p:message id="msgNom" for="nom_projet"/>
+
+                                <p:outputLabel for="desc_projet" value="Description du projet"/>
+                                <p:inputTextarea id="desc_projet" value="#{projetProposeControleur.projetPropose.description}" validatorMessage="La description doit avoir au minimum 6 caractères">
+
+                                    <p:ajax event="keyup" update="msgDesc"/>
+                                    <f:validateLength for="desc_projet" minimum="6"/>
+                                </p:inputTextarea>
+                                <p:message id="msgDesc" for="desc_projet"/>
+
+
+                                <p:outputLabel for="langprog" value="Langage de programmation"/>
+                                <h:inputText id="langprog" value="#{projetProposeControleur.projetPropose.langageprog}" validatorMessage="Langage de programmation invalide">
+                                    <f:validateRegex pattern="[A-Za-z\\.].*"/>
+                                    <p:ajax event="keyup" update="msglangprog"/>
+                                </h:inputText>
+                                <p:message id="msglangprog" for="langprog"/>
+
+                            </h:panelGrid>
+
+
+                            <p:commandButton value="Proposer projet" action="#{projetProposeControleur.ajouterparEnseignant()}"/>
+                        </p:panel>
+                    </div>
+                </h:form>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+
+

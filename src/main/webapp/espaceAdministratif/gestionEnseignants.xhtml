@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administratif.xhtml">
+            <ui:define name="title">
+                Gestion Enseignants
+            </ui:define>
+            <ui:define name="center">
+                <h:form id="form">
+                    <p:growl showDetail="true" autoUpdate="false" sticky="true" id="growl"/>
+
+                    <p:commandButton style="float: right;" icon="ui-icon-plusthick"
+                                     onclick="dlg.show();" type="button" value="Ajouter Enseignant"/>
+
+                    <p:dataTable style="margin-top: 40px;" var="enseignant" value="#{enseignantControleur.listEnseignants}"
+                                 rowKey="#{enseignant.cinEnseignant}" paginator="true" rows="10"
+                                 id="table_enseignants" emptyMessage="Aucun enseignant"
+                                 selectionMode="single" editable="true"
+                                 filteredValue="#{enseignantControleur.filtredEnseignants}">
+
+                        <p:ajax event="rowEdit" listener="#{enseignantControleur.update}" update=":form:growl :form:table_enseignants" />
+                        <p:ajax event="rowEditCancel" listener="#{enseignantControleur.cancelUpdate}" update=":form:growl" />
+
+                        <f:facet name="header">
+                            Liste des Enseignants
+                        </f:facet>
+
+                        <!--Le champ du CIN (cle primaire) ne doit pas etre mis a jour-->
+                        <p:column headerText="CIN" filterBy="cinEnseignant" sortBy="cinEnseignant">
+                            <h:outputText value="#{enseignant.cinEnseignant}"/>
+                        </p:column>
+
+                        <p:column headerText="Nom" filterBy="nom">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{enseignant.nom}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{enseignant.nom}" id="nom_ed"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Prénom" filterBy="prenom">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{enseignant.prenom}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{enseignant.prenom}" id="prenom_ed"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Grade" filterBy="grade">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{enseignant.grade.grade}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu id="grade_ed" value="#{enseignant.grade}" converter="genericConverter">
+                                        <f:selectItems var="g" value="#{gradeControleur.grades}"
+                                                       itemLabel="#{g.grade}" itemValue="#{g}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Mail" filterBy="mail">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{enseignant.mail}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{enseignant.mail}" id="mail_ed"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Tel" filterBy="tel">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{enseignant.tel}" />
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{enseignant.tel}" id="tel_ed"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column style="width: 6%;">
+                            <p:rowEditor/>
+                        </p:column>
+                        <p:column style="width: 6%;">
+                            <p:commandButton icon="ui-icon-trash" actionListener="#{enseignantControleur.supprimer(enseignant)}" update=":form:table_enseignants"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+                <p:dialog id="dialog" header="Espace Enseignant" modal="true" appendToBody="true"
+                          width="400" height="400" draggable="false" widgetVar="dlg">
+                    <h:form>
+                        <h:panelGrid columns="3" cellpadding="5">
+                            <p:outputLabel value="CIN" for="cin"/>
+                            <p:inputText placeholder="Entrer le cin de l'enseignant" value="#{enseignant.cinEnseignant}" id="cin">
+                                <p:ajax update="msgCin" event="keyup" />
+                                </p:inputText>
+                                <p:message for="cin" id="msgCin"/>
+                                <p:outputLabel value="Nom" for="nom"/>
+                                <p:inputText placeholder="Entrer le nom de l'enseignant" value="#{enseignant.nom}" id="nom">
+                                    <p:ajax update="msgNom" event="keyup" />
+                                </p:inputText>
+                                <p:message for="nom" id="msgNom"/>
+                                <p:outputLabel value="Prénom" for="prenom"/>
+                                <p:inputText placeholder="Entrer le prénom de l'enseignant" value="#{enseignant.prenom}" id="prenom">
+                                    <p:ajax update="msgPrenom" event="keyup" />
+                                </p:inputText>
+                                <p:message for="prenom" id="msgPrenom"/>
+
+                                <p:outputLabel value="Grade" for="grade"/>
+                                <p:selectOneMenu id="grade" value="#{enseignant.grade}" converter="genericConverter">
+                                    <f:selectItems var="gradeItem"  value="#{gradeControleur.grades}"
+                                                   itemLabel="#{gradeItem.grade}" itemValue="#{gradeItem}"/>
+                                </p:selectOneMenu>
+                                <p:message for="grade" id="msgGrade"/>
+
+                                <p:outputLabel value="Email" for="email"/>
+                                <p:inputText placeholder="Entrer le mail de l'enseignant" value="#{enseignant.mail}" id="email">
+                                    <p:ajax update="msgMail" event="keyup" />
+                                </p:inputText>
+                                <p:message for="email" id="msgMail"/>
+
+                                <p:outputLabel value="Tel" for="tel"/>
+                                <p:inputText placeholder="Entrer le tel de l'enseignant" value="#{enseignant.tel}" id="tel">
+                                    <p:ajax update="msgTel" event="keyup" />
+                                </p:inputText>
+                                <p:message for="tel" id="msgTel"/>
+                            </h:panelGrid>
+                            <div align="center">
+                                <p:commandButton id="submit" value="ajouter" action="#{enseignantControleur.ajouter(enseignant)}" update="@(form)"/>
+                            </div>
+                    </h:form>
+                </p:dialog>
+
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

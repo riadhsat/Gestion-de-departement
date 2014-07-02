@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 29 mars 2014 16:00:47 by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="com.projetIF4.model.Enseignant" table="enseignant" catalog="pfa">
+        <id name="cinEnseignant" type="int">
+            <column name="cin_enseignant" />
+            <generator class="assigned"></generator>
+        </id>
+        <many-to-one name="grade" class="com.projetIF4.model.Grade" lazy="false" fetch="join">
+            <column name="codegra" not-null="true" />
+        </many-to-one>
+        <property name="nom" type="string">
+            <column name="nom" length="254" />
+        </property>
+        <property name="prenom" type="string">
+            <column name="prenom" length="254" />
+        </property>
+        <property name="mail" type="string">
+            <column name="mail" length="254" not-null="true" />
+        </property>
+        <property name="tel" type="java.lang.Integer">
+            <column name="tel" />
+        </property>
+        <set name="choixEnseignants" table="choix_enseignant" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="cin_enseignant" not-null="true" />
+            </key>
+            <one-to-many class="com.projetIF4.model.ChoixEnseignant" />
+        </set>
+        <set name="pfas" table="pfa" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="Ens_cin" />
+            </key>
+            <one-to-many class="com.projetIF4.model.Pfa" />
+        </set>
+        <set name="pfesForEnsCin2" table="pfe" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="Ens_cin2" />
+            </key>
+            <one-to-many class="com.projetIF4.model.Pfe" />
+        </set>
+        <set name="pfesForEnsCin1" table="pfe" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="Ens_cin1" />
+            </key>
+            <one-to-many class="com.projetIF4.model.Pfe" />
+        </set>
+        <set name="projetproposes" table="projetpropose" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="cin_ens" />
+            </key>
+            <one-to-many class="com.projetIF4.model.Projetpropose" />
+        </set>
+        <set name="pfesForEnsCin" table="pfe" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="Ens_cin" />
+            </key>
+            <one-to-many class="com.projetIF4.model.Pfe" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 29 mars 2014 16:50:59 by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class catalog="pfa" name="com.projetIF4.model.Projetpropose" table="projetpropose">
+        <id name="codeProjet" type="java.lang.Integer">
+            <column name="codeProjet"/>
+            <generator class="identity"/>
+        </id>
+        <many-to-one class="com.projetIF4.model.Etudiant" fetch="join" lazy="false" name="etudiantByCinetu">
+            <column name="cinetu"/>
+        </many-to-one>
+        <many-to-one class="com.projetIF4.model.Etudiant" fetch="join" lazy="false" name="etudiantByEtuCinetu">
+            <column name="Etu_cinetu"/>
+        </many-to-one>
+        <many-to-one class="com.projetIF4.model.Enseignant" fetch="join" lazy="false" name="encadreur">
+            <column name="encadreur"/>
+        </many-to-one>
+        <many-to-one name="section" class="com.projetIF4.model.Section">
+            <column name="code_section" />
+        </many-to-one>
+        <property name="typeProjet" type="string">
+            <column length="4" name="type_projet" not-null="true"/>
+        </property>
+        <property name="nomProjet" type="string">
+            <column length="256" name="nomProjet" not-null="true"/>
+        </property>
+        <property name="description" type="string">
+            <column length="256" name="description" not-null="true"/>
+        </property>
+        <property name="langageprog" type="string">
+            <column length="256" name="langageprog"/>
+        </property>
+        <property name="etatProjet" type="string">
+            <column length="11" name="etat_projet" not-null="true"/>
+        </property>
+        <property name="proposePar" type="string">
+            <column length="11" name="propose_par" not-null="true"/>
+        </property>
+        <set fetch="select" inverse="true" lazy="true" name="choixProjets" table="choix_projet">
+            <key>
+                <column name="codeProjet" not-null="true"/>
+            </key>
+            <one-to-many class="com.projetIF4.model.ChoixProjet"/>
+        </set>
+    </class>
+</hibernate-mapping>

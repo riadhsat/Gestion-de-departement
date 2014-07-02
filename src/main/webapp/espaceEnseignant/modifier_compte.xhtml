@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:h="http://java.sun.com/jsf/html"
+       xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:p="http://primefaces.org/ui">
+    <h:head/>
+
+    <h:body>
+        <ui:composition template="template_espace_enseignant.xhtml">
+            <ui:define name="title">
+                Espace Enseignant | Modifier Compte
+            </ui:define>
+            <ui:define name="center">
+                <h:form>
+                    <p:growl id="messages" showDetail="true" />
+                    <p:fieldset legend="Modification des données du compte">
+                        <p:panelGrid id="grid" columns="3">
+                            <p:outputLabel for="login" value="login"/>
+                            <p:inplace>
+                                <p:inputText id="login" value="#{usersController.userLogin}">
+                                    <p:ajax update="msgLogin" event="keyup"/>
+                                </p:inputText>
+                                <p:message for="login" id="msgLogin"/>
+                            </p:inplace>
+                            <p:outputLabel for="pass" value="Mot de passe"/>
+                            <p:inplace>
+                                <p:password id="pass" match="pass2" value="#{usersController.userPass}">
+                                    <p:ajax update="msgPass" event="keyup"/>
+                                </p:password>>
+                                <p:message for="pass" id="msgPass"/>
+                            </p:inplace>
+                            <p:outputLabel for="pass2" value="Retaper le mot de passe"/>
+                            <p:inplace>
+                                <p:password id="pass2" value="#{usersController.userPass}">
+                                    <p:ajax update="msgPass2" event="keyup"/>
+                                </p:password>>
+                                <p:message for="pass2" id="msgPass2"/>
+                            </p:inplace>
+                        </p:panelGrid>
+                        <div align="center">
+                            <p:commandButton value="Enregistrer les modifications" actionListener="#{usersController.modifierCompte()}" update="messages">
+                                <p:confirm header="Confirmer la modification" message="Etes vous sures de modifier vos données ?" icon="ui-icon-alert" />
+                            </p:commandButton>
+
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+                                <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                                <p:commandButton value="Non" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+                            </p:confirmDialog>
+                        </div>
+                    </p:fieldset>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

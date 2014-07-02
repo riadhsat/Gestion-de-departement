@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:pretty="http://ocpsoft.com/prettyfaces">
+
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <h:outputStylesheet name="css/style.css"/>
+            <title><ui:insert id="titre" name="title"/></title>
+        </h:head>
+
+        <h:body>
+            <p:layout fullPage="true">
+                <!-- haut de page -->
+                <p:layoutUnit position="north" styleClass="layout_north" size="100" resizable="false" closable="false" collapsible="true">
+                    <h:graphicImage value="/resources/img/logo_fst.png" id="logofst" alt="fst"/>
+                    <h:form id="user_panel">
+                        <h:panelGrid columns="2" cellpadding="1">
+                            <h:outputText value="Connecté en tant que :"/>
+                            <h:outputText style="text-transform: uppercase;font-size: larger;font-weight: bold" value="#{usersController.userLogin}"/>
+                            <!-- -->
+                            <p:commandButton value="Déconnecter" action="#{usersController.deconnect()}"
+                                             onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                        </h:panelGrid>
+                    </h:form>
+                </p:layoutUnit> 
+                <!-- Centre des pages -->
+                <p:layoutUnit position="center">
+                    
+                    
+                    <!-- Menu Gauche --> 
+                    
+                    <h:form style="width:206px; position:absolute;">
+                           <p:panelMenu>
+                               <p:submenu label="Gestion des utilisateurs " >
+                                <p:menuitem value="Gestion Utilisateur" action="pretty:AdminGestionUtilisateurs" 
+                                            onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:submenu>
+                               <p:submenu label="Gestion des Projets" >
+                                <p:menuitem value="Projet de Fin D'études" action="pretty:AdminGestionPFE" 
+                                            onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                                <p:menuitem value="Projet Fin D'année" action="pretty:AdminGestionPFA" 
+                                            onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:submenu>
+                            <p:submenu label="Gestion des sections">
+                                <p:menuitem value="Gestion Section" action="pretty:AdminGestionSections" 
+                                            onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:submenu>
+                            <p:submenu label="Gestion des grades">
+                                <p:menuitem value="Gestion Grade" action="pretty:AdminGestionGrades" 
+                                            onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:submenu>
+                           
+                            <p:submenu label="Gestion des salles">
+                                <p:menuitem value="Gestion Salles" action="pretty:AdminGestionSalles" 
+                                            onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:submenu>
+                            
+                            <p:submenu label="Gestion des spécialités">
+                                <p:menuitem value="Gestion Spécialité" action="pretty:AdminGestionSpecialites" 
+                                            onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:submenu>
+                            <p:separator />
+                            <p:submenu label="Gestion des Enseignants">
+                                <p:menuitem value="Gestion Enseignants" action="pretty:AdminGestionEnseignants" 
+                                            onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:submenu>
+                            <p:separator />
+                            <p:submenu label="Gestion des Etudiants">
+                                <p:menuitem value="Gestion Etudiants" action="pretty:AdminGestionEtudiants" 
+                                            onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:submenu>
+                            <p:separator />
+                            <p:submenu label="Planning">
+                                <p:menuitem value="Plannification des PFE" action="pretty:AdminGestionPlanningPFE" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                                <p:menuitem value="Plannification des PFA" action="pretty:AdminGestionPlanningPFA" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:submenu>
+                            <p:separator/>
+                            <p:submenu label="Exportation">
+                                <p:menuitem value="Exportation Par salle" action="pretty:AdminExportationParSalle" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                                <p:menuitem value="Exportation Par Enseignant" action="pretty:AdminExportationParEnseignant" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:submenu>
+                            <p:submenu label="Modifier Compte">
+                                <p:menuitem value="Données du compte" action="pretty:AdminModifierCompte" />
+                            </p:submenu>                  
+                           </p:panelMenu>                           
+                       </h:form>
+                    <ui:insert name="center"/>
+                    <ui:insert name="script"/>
+                </p:layoutUnit>
+            </p:layout>
+            <pe:blockUI widgetVar="blockUIWidget">
+                <h:panelGrid columns="2">
+                    <h:graphicImage library="img" name="ajax-loader.gif"
+                                    style="margin-right: 12px; vertical-align: middle;"/>
+                    <h:outputText value="Veuiller Patienter..." style="white-space: nowrap;"/>
+                </h:panelGrid>
+            </pe:blockUI>
+        </h:body>
+
+    </f:view>
+</html>
+

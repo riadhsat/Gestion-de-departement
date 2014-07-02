@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:h="http://java.sun.com/jsf/html"
+       xmlns:f="http://java.sun.com/jsf/core"
+              xmlns:ui="http://java.sun.com/jsf/facelets"
+              xmlns:p="http://primefaces.org/ui">
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administratif.xhtml">
+            <ui:define name="title">
+                Modifier Sections 
+            </ui:define>    
+            <ui:define name="center">
+
+                <h:form>
+                    <!-- pour les notifs -->
+                    <p:growl id="growl" showDetail="true" sticky="false" life="2000"/>
+                    <p:fieldset legend="Modifier les  Sections"> 
+
+                        <p:dataTable var="section" value="#{sectionControleur.sections}">
+                            <p:column headerText="Section">
+                                <p:inplace editor="true">
+                                    <p:inputText value="#{section.section}"/>
+                                </p:inplace>
+                            </p:column>
+                        </p:dataTable>
+                        <div align="center">
+                            <p:commandButton id="submit" value="Mettre à jour" actionListener="#{sectionControleur.update()}" update="growl"/>
+                        </div>
+                    </p:fieldset>
+                </h:form>
+                <p:ajaxStatus id="ajaxStatusPanel">
+                    <f:facet name="start">
+                        <h:graphicImage value="../resources/img/ajax-loader.gif"/>
+                    </f:facet>
+                    <f:facet name="complete">
+                        <h:outputText value=""/>
+                    </f:facet>
+                </p:ajaxStatus>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

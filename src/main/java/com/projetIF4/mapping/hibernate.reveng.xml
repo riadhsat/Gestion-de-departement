@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd">
+<hibernate-reverse-engineering>
+  <schema-selection match-catalog="pfa"/>
+  <table-filter match-name="projetpropose"/>
+  <table-filter match-name="etudiant"/>
+  <table-filter match-name="utilisateurs"/>
+  <table-filter match-name="pfa"/>
+  <table-filter match-name="section"/>
+  <table-filter match-name="enseignant"/>
+  <table-filter match-name="grade"/>
+  <table-filter match-name="pfe"/>
+  <table-filter match-name="specialite"/>
+  <table-filter match-name="choix_enseignant"/>
+  <table-filter match-name="salle"/>
+  <table-filter match-name="choix_projet"/>
+</hibernate-reverse-engineering>

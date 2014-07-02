@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 29 mars 2014 16:50:59 by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="com.projetIF4.model.Specialite" table="specialite" catalog="pfa">
+        <id name="codespe" type="java.lang.Integer">
+            <column name="codespe" />
+            <generator class="identity"></generator>
+        </id>
+        <property name="specialite" type="string">
+            <column name="specialite" length="254" not-null="true" />
+        </property>
+        <set name="pfes" table="pfe" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="codespe" />
+            </key>
+            <one-to-many class="com.projetIF4.model.Pfe" />
+        </set>
+        <set name="pfas" table="pfa" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="codespe" />
+            </key>
+            <one-to-many class="com.projetIF4.model.Pfa" />
+        </set>
+        <set name="etudiants" table="etudiant" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="codespe" not-null="true" />
+            </key>
+            <one-to-many class="com.projetIF4.model.Etudiant" />
+        </set>
+    </class>
+</hibernate-mapping>

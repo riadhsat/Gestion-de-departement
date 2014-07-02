@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administrateur.xhtml">
+            <ui:define name="title">
+                Gestion des Projet fin d'annee
+            </ui:define>
+            <ui:define name="center">
+                 <p:growl id="messages" autoUpdate="true" showDetail="true" /> 
+                <h:form id="PfaListForm" style=" margin-left: 208px; margin-right: auto;">
+                <p:panel header="liste des projet fin d'annee">
+                    <p:dataTable id="datalist" value="#{pfaControleur.pfas}" var="pfa"
+                                 selectionMode="single" selection="#{pfaControleur.selected}"
+                                 paginator="true" filteredValue="#{pfaControleur.filtrepfas}"
+                                 rowKey="#{pfa.codepfa}" rows="10">
+                        <p:ajax event="rowSelect"   update="createButton editButton deleteButton"/>
+                        <p:ajax event="rowUnselect" update="createButton editButton deleteButton"/>
+                        <p:column filterBy="#{pfa.codepfa}" filterStyle="width: 20px;"  >
+                            <f:facet name="header">
+                                <h:outputText value="Code"/>
+                            </f:facet>
+                            <h:outputText value="#{pfa.codepfa}"/>
+                        </p:column>
+                        <p:column filterBy="#{pfa.nomprojet}">
+                            <f:facet name="header">
+                                <h:outputText value="Nom projet"/>
+                            </f:facet>
+                            <h:outputText value="#{pfa.nomprojet}"/>
+                        </p:column>
+                        <p:column filterBy="#{pfa.description}">
+                            <f:facet name="header">
+                                <h:outputText value="Description"/>
+                            </f:facet>
+                            <h:outputText value="#{pfa.description}"/>
+                        </p:column>
+                        <p:column filterBy="#{pfa.etudiantByEtuCin.nomPrenom}">
+                            <f:facet name="header">
+                                <h:outputText value="Etudiant 1"/>
+                            </f:facet>
+                            <h:outputText value="#{pfa.etudiantByEtuCin.nomPrenom}"/>
+                        </p:column>
+                        <p:column filterBy="#{pfa.etudiantByEtuCin1.nomPrenom}">
+                            <f:facet name="header">
+                                <h:outputText value="Etudiant 2"/>
+                            </f:facet>
+                            <h:outputText value="#{pfa.etudiantByEtuCin1.nomPrenom}" 
+                                          rendered="#{pfa.etudiantByEtuCin1 ne null}"/>
+                        </p:column>
+                        
+                        <p:column filterBy="#{pfa.encardeur.cinEnseignant}">
+                            <f:facet name="header">
+                                <h:outputText value="CIN Encadreur"/>
+                            </f:facet>
+                            <h:outputText value="#{pfa.encardeur.cinEnseignant}"/>
+                        </p:column>
+                        <p:column filterBy="#{pfa.encardeur.prenom}">
+                            <f:facet name="header">
+                                <h:outputText value="Encadreur"/>
+                            </f:facet>
+                            <h:outputText value="#{pfa.encardeur.prenom} #{pfa.encardeur.nom}"/>
+                        </p:column>
+                        <p:column filterBy="#{pfa.section.section}">
+                            <f:facet name="header">
+                                <h:outputText value="Section"/>
+                            </f:facet>
+                            <h:outputText value="#{pfa.section.section}"/>
+                        </p:column>
+                        <p:column filterBy="#{pfa.specialite.specialite}">
+                            <f:facet name="header">
+                                <h:outputText value="Specialite"/>
+                            </f:facet>
+                            <h:outputText value="#{pfa.specialite.specialite}"/>
+                        </p:column>
+                        <f:facet name="header">
+                            <p:commandButton id="createButton" icon="ui-icon-plus"   value="Ajouter" actionListener="#{pfaControleur.prepareCreate}" update=":PfaCreateForm" oncomplete="PF('PfaCreateDialog').show()"/>
+                            <p:commandButton id="editButton"   icon="ui-icon-pencil" value="Modifier" update=":PfaEditForm" oncomplete="PF('PfaEditDialog').show()" disabled="#{empty pfaControleur.selected}"/>
+                            <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="Supprimer" actionListener="#{pfaControleur.supprimer}" update="datalist" disabled="#{empty pfaControleur.selected}"/>
+                        </f:facet>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+                 <p:dialog id="PfaCreateDlg" widgetVar="PfaCreateDialog" modal="true" 
+                           resizable="false" appendTo="@(body)" header="cree un projet"
+                           dynamic="true">
+            <h:form id="PfaCreateForm">
+                <p:fieldset legend="Information">
+                <h:panelGroup id="display">
+                    <h:panelGrid columns="2" >       
+                        <p:outputLabel value="Nom projet" for="nomprojet" />
+                        <p:inputText id="nomprojet" value="#{pfaControleur.newpfa.nomprojet}" required="true" requiredMessage="saisie le nom de projet"/>
+                        <p:outputLabel value="description" for="description" />
+                        <p:inputTextarea rows="4" cols="30" id="description" value="#{pfaControleur.newpfa.description}"/>
+                        <p:outputLabel value="Encadreur" for="encadreur" />
+                        <p:selectOneMenu id="encadreur" value="#{pfaControleur.newpfa.encardeur}" converter="genericConverter"
+                                         required="true" requiredMessage="selectionne un enseignant">
+                            <f:selectItems value="#{enseignantControleur.listEnseignants}"
+                                           var="enseignant" itemLabel="#{enseignant.prenom} #{enseignant.nom}"
+                                           itemValue="#{enseignant}"/>
+                        </p:selectOneMenu>              
+                        
+                        <p:outputLabel value="Etudiant 1" for="etudiant1" />
+                        <p:selectOneMenu id="etudiant1" value="#{pfaControleur.newpfa.etudiantByEtuCin}" 
+                                         converter="genericConverter" required="true" 
+                                         requiredMessage="selectionne un etudiant">
+                            <f:ajax render="@form" />
+                            <f:selectItem noSelectionOption="true" itemLabel="Etudiant 1"/>
+                            <f:selectItems value="#{pfaControleur.etudiants}"
+                                           var="etudiant" itemLabel="#{etudiant.nomPrenom}"
+                                           itemValue="#{etudiant}"/>
+                            <p:ajax update="etudiant2 section sectionnull specialite specialitenull"                                           
+                                        listener="#{pfaControleur.mettreAJourEtudiant2}"
+                                        onstart="PF('blockUIWidget').block()"
+                                        oncomplete="PF('blockUIWidget').unblock()"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Etudiant 2" for="etudiant2" />
+                        <p:selectOneMenu id="etudiant2" value="#{pfaControleur.newpfa.etudiantByEtuCin1}" converter="genericConverter">
+                            <f:selectItem noSelectionOption="true" itemLabel="Etudiant 2"/>
+                            <f:selectItems value="#{pfaControleur.filtreetudiants}"
+                                           var="etudiant" itemLabel="#{etudiant.nomPrenom}"
+                                           itemValue="#{etudiant}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Section" for="section" />
+                        <p:column>
+                        <p:outputLabel id="section" value="#{pfaControleur.newpfa.section.section}" 
+                                       rendered="#{pfaControleur.newpfa.section ne null}" />
+                        <p:outputLabel id="sectionnull" value="non definie" 
+                                       rendered="#{pfaControleur.newpfa.section eq null}" />
+                        </p:column>
+                        <p:outputLabel value="specialite" />
+                        <p:column>
+                            <p:outputLabel id="specialite" value="#{pfaControleur.newpfa.specialite.specialite}" 
+                                       rendered="#{pfaControleur.newpfa.specialite ne null}" />
+                        <p:outputLabel id="specialitenull" value="non definie" 
+                                       rendered="#{pfaControleur.newpfa.section eq null}" />  
+                            
+                        </p:column>
+                    </h:panelGrid> 
+                    <div style="text-align: center">
+                    <p:commandButton type="submit"  actionListener="#{pfaControleur.ajouter}" value="Ajouter" update="display,:PfaListForm:datalist"
+                                     oncomplete="PfaCreateDialog.hide()"/>
+                    <p:commandButton immediate="true" value="annuler" onclick="PfaCreateDialog.hide()"/></div>
+                 </h:panelGroup>
+                 </p:fieldset>
+            </h:form>      
+        </p:dialog>
+                <p:dialog id="PfaEditDlg" widgetVar="PfaEditDialog" modal="true" resizable="false" 
+                          appendTo="@(body)" header="Modifier Projet" dynamic="true">
+            <h:form id="PfaEditForm">
+                <p:fieldset legend="Information">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" >       
+                        <p:outputLabel value="Nom projet" for="nomprojet" />
+                        <p:inputText id="nomprojet" value="#{pfaControleur.selected.nomprojet}" required="true" requiredMessage="saisie le nom de projet"/>
+                        <p:outputLabel value="description" for="description" />
+                        <p:inputTextarea rows="4" cols="30" id="description" value="#{pfaControleur.selected.description}"/>
+                        <p:outputLabel value="Encadreur" for="encadreur" />
+                        <p:selectOneMenu id="encadreur" value="#{pfaControleur.selected.encardeur}" 
+                                         converter="genericConverter" >
+                            <f:selectItems value="#{enseignantControleur.listEnseignants}"
+                                           var="enseignant" itemLabel="#{enseignant.prenom} #{enseignant.nom}"
+                                           itemValue="#{enseignant}"/>
+                        </p:selectOneMenu>              
+                        <p:outputLabel value="Section" for="section" />
+                        <p:selectOneMenu id="section" value="#{pfaControleur.selected.section}"  
+                                          converter="genericConverter">
+                            <f:ajax  render="@form"/>
+                            <f:selectItems value="#{sectionControleur.sections}"
+                                           var="section" itemLabel="#{section.section}"
+                                           itemValue="#{section}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Etudiant 1" for="etudiant1" />
+                        <p:selectOneMenu id="etudiant1" value="#{pfaControleur.selected.etudiantByEtuCin}" 
+                                         converter="genericConverter">
+                            <f:ajax  render="@form"/>
+                            <f:selectItems value="#{etudiantControleur.etudiants}"
+                                           var="etudiant" itemLabel="#{etudiant.nomPrenom}"
+                                           itemValue="#{etudiant}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Etudiant 2" for="etudiant2" />
+                        <p:selectOneMenu id="etudiant2" value="#{pfaControleur.selected.etudiantByEtuCin1}" converter="genericConverter">
+                            <f:ajax  render="@form"/>
+                            <f:selectItem noSelectionOption="true" itemLabel="-------"/>
+                            <f:selectItems value="#{etudiantControleur.etudiants}"
+                                           var="etudiant" itemLabel="#{etudiant.nomPrenom}"
+                                           itemValue="#{etudiant}"/>
+                        </p:selectOneMenu>
+                        
+                        <p:outputLabel value="specialite" for="specialite" />
+                        <p:selectOneMenu id="specialite" value="#{pfaControleur.selected.specialite}" 
+                                         converter="genericConverter">
+                            <f:ajax  render="@form"/>
+                            <f:selectItems value="#{specialiteControleur.specialites}"
+                                           var="specialite" itemLabel="#{specialite.specialite}"
+                                           itemValue="#{specialite}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <div style="text-align: center">
+                    <p:commandButton  type="submit"  actionListener="#{pfaControleur.modifier}" value="modifier" update="display,:PfaListForm:datalist"
+                                     oncomplete="PfaEditDialog.hide()"/>
+                    <p:commandButton immediate="true" value="annuler" onclick="PfaEditDialog.hide()"/></div>
+                </h:panelGroup>
+                </p:fieldset>
+            </h:form>
+        </p:dialog>
+            </ui:define>         
+        </ui:composition>
+    </h:body>
+</html>
+

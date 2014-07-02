@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head/>
+    <h:body>
+        <ui:composition template="template_espace_administrateur.xhtml">
+            <ui:define name="title">
+                Gestion des grades
+            </ui:define>
+            <ui:define name="center">
+
+                <h:form id="form" style=" margin-left: 210px; margin-right: auto;">
+                    <p:growl showDetail="true" autoUpdate="true" life="2000" id="growl"/>
+                    
+                     <p:commandButton style="float: right;" icon="ui-icon-plusthick" update=":addgrade"
+                                      actionListener="#{gradeControleur.prepareCreate}"
+                                     value="Ajouter Grade" oncomplete="PF('dlgadd').show()"/>
+
+                    <p:dataTable var="grade" value="#{gradeControleur.grades}"
+                                 rowKey="#{grade.codegra}" paginator="true" rows="10"
+                                 id="table_grades" emptyMessage="Aucun Grade"
+                                 selectionMode="single" 
+                                 filteredValue="#{gradeControleur.filtredGrades}">
+
+                        <p:ajax event="rowSelect"    update="deleteButton EditButton" />
+                        <p:ajax event="rowUnselect"  update="deleteButton EditButton" />
+
+                        <f:facet name="header">
+                            Liste des Grades
+                        </f:facet>
+
+                        <p:column headerText="Code Grade" filterBy="codegra" sortBy="codegra">
+                            <f:facet name="header">
+                                <h:outputText value="Code"/>
+                            </f:facet>
+                            <h:outputText value="#{grade.codegra}"/>
+                        </p:column>                        
+
+                        <p:column headerText="Grade" filterBy="grade"> 
+                            <f:facet name="header">
+                                <h:outputText value="Grade"/>                                
+                            </f:facet>                                
+                                <h:outputText value="#{grade.grade}" />                                
+                        </p:column>
+                        <p:column style="width: 6%;">
+                           <p:commandButton id="EditButton" icon="ui-icon-pencil" immediate="true"
+                                             update="table_grades :editgrade"
+                                             oncomplete="PF('dlgEdit').show()">
+                                <f:setPropertyActionListener value="#{grade}"
+                                                             target="#{gradeControleur.newGrade}" />
+                            </p:commandButton>
+                        </p:column>
+                        <p:column style="width: 6%;">
+                            <p:commandButton id="deleteButton" icon="ui-icon-trash" update=":form:table_grades"
+                                             actionListener="#{gradeControleur.supprimer(grade)}" />
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+                <p:dialog id="addgrade" header="Ajouter Grade" modal="true" appendTo="@(body)"
+                          width="400" height="150" closable="false" resizable="false"
+                          draggable="false" widgetVar="dlgadd">
+                    <h:form>
+                        <p:fieldset legend="Information">
+                        <h:panelGrid id="grid" columns="3" cellpadding="4">
+                            <p:outputLabel value="Grade :" for="grade"/>
+                            <p:inputText id="grade" validatorMessage="Entrer un grade valide"
+                                         value="#{gradeControleur.newGrade.grade}">
+                                <p:ajax update="msgGrade" event="keyup" />
+                                <f:validateRegex pattern="[^0-9]+" for="grade"/>
+                                <f:validateLength minimum="3" maximum="254" for="grade"/>
+                            </p:inputText>
+                            <p:message for="grade" id="msgGrade"/>
+                        </h:panelGrid>
+                        <div align="center">
+                            <p:commandButton id="submit" value="Ajouter" actionListener="#{gradeControleur.add}" update=":form:table_grades"/>
+                            <p:commandButton immediate="true" value="Annuler" onstart="PF('dlgadd').hide()"
+                                             actionListener="#{gradeControleur.afficheMsgAnnuler}"  />
+                        </div>
+                         </p:fieldset>
+                    </h:form>
+                </p:dialog>
+                <p:dialog id="editgrade" header="Modifier Grade" modal="true" appendTo="@(body)"
+                          width="400" height="150" closable="false" resizable="false"
+                          draggable="false" widgetVar="dlgEdit">
+                    <h:form>
+                        <p:fieldset legend="Information">
+                        <h:panelGrid id="grid" columns="3" cellpadding="4">
+                            <p:outputLabel value="Grade :" for="grade"/>
+                            <p:inputText id="grade" validatorMessage="Entrer un grade valide"
+                                         value="#{gradeControleur.newGrade.grade}">
+                                <p:ajax update="msgGrade" event="keyup" />
+                                <f:validateRegex pattern="[^0-9]+" for="grade"/>
+                                <f:validateLength minimum="3" maximum="254" for="grade"/>
+                            </p:inputText>
+                            <p:message for="grade" id="msgGrade"/>
+                        </h:panelGrid>
+                        <div align="center">
+                            <p:commandButton id="submit" value="Modifier" actionListener="#{gradeControleur.edit}" update=":form:table_grades"/>
+                            <p:commandButton immediate="true" value="Annuler" onstart="PF('dlgEdit').hide()"
+                                             actionListener="#{gradeControleur.annuler}"  />
+                        </div>
+                         </p:fieldset>
+                    </h:form>
+                </p:dialog>
+                
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
