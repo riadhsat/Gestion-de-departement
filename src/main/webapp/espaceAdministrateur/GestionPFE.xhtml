@@ -14,7 +14,7 @@
             <ui:define name="center">
                  <p:growl id="messages" autoUpdate="true" showDetail="true" /> 
                 <h:form id="PfeListForm" style=" margin-left: 210px; margin-right: auto;">
-                <p:panel header="liste des projet fin d'etude">
+                    <p:panel header="Projet de fin d'etude">
                     <p:dataTable id="datalist" value="#{pfeControleur.pfes}" var="pfe"
                                  selectionMode="single" selection="#{pfeControleur.selected}"
                                  paginator="true"
@@ -24,31 +24,14 @@
                         <p:ajax event="rowSelect"   update="createButton editButton deleteButton"/>
                         <p:ajax event="rowUnselect" update="createButton editButton deleteButton"/>
 
-                        <p:column filterStyle="width: 16px;" filterBy="#{pfe.codepfe}">
-                            <f:facet name="header">
-                                <h:outputText value="Code"/>
-                            </f:facet>
-                            <h:outputText value="#{pfe.codepfe}"/>
-                        </p:column>
-                        <p:column filterStyle="width: 16px;" filterBy="#{pfe.nomprojet}">
+                        <p:column  filterBy="#{pfe.nomprojet}">
                             <f:facet name="header">
                                 <h:outputText value="Nom projet"/>
                             </f:facet>
                             <h:outputText value="#{pfe.nomprojet}"/>
                         </p:column>
-                        <p:column filterStyle="width: 16px;" filterBy="#{pfe.description}">
-                            <f:facet name="header">
-                                <h:outputText value="Description"/>
-                            </f:facet>
-                            <h:outputText value="#{pfe.description}"/>
-                        </p:column>
-                        <p:column filterBy="#{pfe.methodeconception}">
-                            <f:facet name="header">
-                                <h:outputText value="Methode de Conception"/>
-                            </f:facet>
-                            <h:outputText value="#{pfe.methodeconception}"/>
-                        </p:column>
-                        <p:column filterBy="#{pfe.langageprog}" filterStyle="width: 50px;">
+                        
+                        <p:column filterBy="#{pfe.langageprog}" >
                             <f:facet name="header">
                                 <h:outputText value="Language de programmation"/>
                             </f:facet>
@@ -73,7 +56,7 @@
                             </f:facet>
                             <h:outputText value="#{pfe.encadreur.prenom} #{pfe.encadreur.nom}"/>
                         </p:column>
-                        <p:column filterBy="#{pfe.section.section}" filterStyle="width: 20px;">
+                        <p:column filterBy="#{pfe.section.section}">
                             <f:facet name="header">
                                 <h:outputText value="Section"/>
                             </f:facet>
