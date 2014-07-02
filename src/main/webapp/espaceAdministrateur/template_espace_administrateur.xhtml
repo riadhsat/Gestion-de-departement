@@ -21,9 +21,17 @@
                 <p:layoutUnit position="north" styleClass="layout_north" size="100" resizable="false" closable="false" collapsible="true">
                     <h:graphicImage value="/resources/img/logo_fst.png" id="logofst" alt="fst"/>
                     <h:form id="user_panel">
-                        <h:panelGrid columns="3" cellpadding="1">
+                        <h:panelGrid columns="4" cellpadding="3">
                             <h:outputText value="Connecté en tant que :"/>
                             <h:outputText style="text-transform: uppercase;font-size: larger;font-weight: bold" value="#{usersController.userLogin}"/>
+                            <h:column>
+                            <p:commandButton id="dynaButton"  type="button" icon="ui-icon-person"/>
+                            <p:menu overlay="true" trigger="dynaButton" my="left top" at="left bottom">
+                                <p:submenu label="Modifier Compte">
+                                <p:menuitem value="Données du compte" action="pretty:AdminModifierCompte" />
+                            </p:submenu>                                
+                            </p:menu>
+                            </h:column>
                             <p:commandButton icon="ui-icon-power" action="#{usersController.deconnect()}"
                                              onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
                         </h:panelGrid>
@@ -80,11 +88,7 @@
                                 <p:menuitem value="Gestion Etudiants" action="pretty:AdminGestionEtudiants" 
                                             onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
                             </p:submenu>
-                            <p:separator />
-                            
-                            <p:submenu label="Modifier Compte">
-                                <p:menuitem value="Données du compte" action="pretty:AdminModifierCompte" />
-                            </p:submenu>                  
+                            <p:separator />                                            
                            </p:panelMenu>                           
                        </h:form>
                     <ui:insert name="center"/>
