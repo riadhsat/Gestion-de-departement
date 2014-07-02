@@ -21,31 +21,35 @@
                 <p:layoutUnit position="north" styleClass="layout_north" size="100" resizable="false" closable="false" collapsible="true">
                     <h:graphicImage value="/resources/img/logo_fst.png" id="logofst" alt="fst"/>
                     <h:form id="user_panel">
-                        <h:panelGrid columns="4" cellpadding="3">
-                            <h:outputText value="Connecté en tant que : "/>
-                            <h:outputText style="text-transform: uppercase;font-size: larger;font-weight: bold" value="#{usersController.userLogin}"/>
-                            <h:column>
-                            <p:commandButton id="dynaButton"  type="button" icon="ui-icon-person"/>
-                            <p:menu overlay="true" trigger="dynaButton" my="left top" at="left bottom">
-                                <p:submenu label="Modifier Compte">
-                                <p:menuitem value="Données du compte" action="pretty:AdminModifierCompte" />
-                            </p:submenu>                                
-                            </p:menu>
-                            </h:column>
-                            <p:commandButton icon="ui-icon-power" action="#{usersController.deconnect()}"
-                                             onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                        <h:panelGrid columns="2">
+                            <h:panelGrid columns="1" cellpadding="3">
+                                <h:outputText value="Connecté en tant que : "/>
+                                <h:outputText style="text-transform: uppercase;font-size: larger;font-weight: bold" value="#{usersController.userLogin}"/>
+                            </h:panelGrid>
+                            <h:panelGrid columns="2" cellpadding="3">
+                                <h:column>
+                                    <p:commandButton id="dynaButton"  type="button" icon="ui-icon-person"/>
+                                    <p:menu overlay="true" trigger="dynaButton" my="left top" at="left bottom">
+                                        <p:submenu label="Modifier Compte">
+                                            <p:menuitem value="Données du compte" action="pretty:AdminModifierCompte" />
+                                        </p:submenu>                                
+                                    </p:menu>
+                                </h:column>
+                                <p:commandButton icon="ui-icon-power" action="#{usersController.deconnect()}"
+                                                 onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                            </h:panelGrid>
                         </h:panelGrid>
                     </h:form>
                 </p:layoutUnit> 
                 <!-- Centre des pages -->
                 <p:layoutUnit position="center">
-                    
-                    
+
+
                     <!-- Menu Gauche --> 
-                    
+
                     <h:form style="width:206px; position:absolute;">
-                           <p:panelMenu>
-                               <p:submenu label="Planning">
+                        <p:panelMenu>
+                            <p:submenu label="Planning">
                                 <p:menuitem value="Plannification des PFE" action="pretty:AdminGestionPlanningPFE" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
                                 <p:menuitem value="Plannification des PFA" action="pretty:AdminGestionPlanningPFA" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
                             </p:submenu>
@@ -55,26 +59,26 @@
                                 <p:menuitem value="Exportation Par Enseignant" action="pretty:AdminExportationParEnseignant" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
                             </p:submenu>
                             <p:separator/>
-                               <p:submenu label="Gestion des comptes " >
+                            <p:submenu label="Gestion des comptes " >
                                 <p:menuitem value="Gestion des comptes" action="pretty:AdminGestionUtilisateurs" 
                                             onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
                             </p:submenu>
-                               <p:submenu label="Gestion des Projets" >
+                            <p:submenu label="Gestion des Projets" >
                                 <p:menuitem value="Projet de Fin D'études" action="pretty:AdminGestionPFE" 
                                             onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
                                 <p:menuitem value="Projet Fin D'année" action="pretty:AdminGestionPFA" 
                                             onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
                             </p:submenu>
-                               <p:submenu label="Configuration" >
-                                   <p:menuitem value="Gestion Section" action="pretty:AdminGestionSections" 
+                            <p:submenu label="Configuration" >
+                                <p:menuitem value="Gestion Section" action="pretty:AdminGestionSections" 
                                             onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
-                                   <p:menuitem value="Gestion Grade" action="pretty:AdminGestionGrades" 
+                                <p:menuitem value="Gestion Grade" action="pretty:AdminGestionGrades" 
                                             onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
-                                   <p:menuitem value="Gestion Salles" action="pretty:AdminGestionSalles" 
+                                <p:menuitem value="Gestion Salles" action="pretty:AdminGestionSalles" 
                                             onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
-                                    <p:menuitem value="Gestion Spécialité" action="pretty:AdminGestionSpecialites" 
+                                <p:menuitem value="Gestion Spécialité" action="pretty:AdminGestionSpecialites" 
                                             onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
-                               </p:submenu>
+                            </p:submenu>
                             <p:separator />
                             <p:submenu label="Gestion des Enseignants">
                                 <p:menuitem value="Gestion Enseignants" action="pretty:AdminGestionEnseignants" 
@@ -86,8 +90,8 @@
                                             onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
                             </p:submenu>
                             <p:separator />                                            
-                           </p:panelMenu>                           
-                       </h:form>
+                        </p:panelMenu>                           
+                    </h:form>
                     <ui:insert name="center"/>
                     <ui:insert name="script"/>
                 </p:layoutUnit>
