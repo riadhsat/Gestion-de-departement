@@ -15,7 +15,7 @@
                 <h:form id="form" style=" margin-left: 210px; margin-right: auto;">
                     <p:growl showDetail="true" autoUpdate="true" life="2000" id="growl"/>
                     <p:commandButton style="float: right;" icon="ui-icon-plusthick"
-                                     onclick="PF('dlg').show();" value="Ajouter Etudiant"/>
+                                     oncomplete="PF('dlg').show();" value="Ajouter Etudiant"/>
 
                     <p:dataTable var="etudiant" value="#{etudiantControleur.etudiants}"
                                  rowKey="#{etudiant.cinetu}" paginator="true" rows="10"
@@ -31,14 +31,14 @@
                         </f:facet>
 
                         <!--Le champ du CIN (cle primaire) ne doit pas etre mis a jour-->
-                        <p:column headerText="CIN" filterBy="cinetu" sortBy="#{etudiant.cinetu}">
+                        <p:column headerText="CIN" filterBy="#{etudiant.cinetu}" sortBy="#{etudiant.cinetu}">
                             <h:outputText value="#{etudiant.cinetu}"/>
                         </p:column>
-                        <p:column headerText="N°Inscription" filterBy="ins">
+                        <p:column headerText="N°Inscription" filterBy="#{etudiant.ins}">
                             <h:outputText value="#{etudiant.ins}"/>
                         </p:column>
 
-                        <p:column headerText="Nom et Prénom" filterBy="nomPrenom">
+                        <p:column headerText="Nom et Prénom" filterBy="#{etudiant.nomPrenom}">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{etudiant.nomPrenom}" />
@@ -53,7 +53,7 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Date de naissance" filterBy="datenaissance">
+                        <p:column headerText="Date de naissance" filterBy="#{etudiant.datenaissance}">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{etudiant.datenaissance}"  >
@@ -68,7 +68,7 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Mail" filterBy="mail">
+                        <p:column headerText="Email" filterBy="#{etudiant.mail}">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{etudiant.mail}" />
@@ -79,7 +79,7 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Section" filterBy="section.section">
+                        <p:column headerText="Section" filterBy="#{etudiant.section.section}">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{etudiant.section.section}" />
@@ -92,7 +92,7 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Spécialite" filterBy="specialite">
+                        <p:column headerText="Spécialite" filterBy="#{etudiant.specialite.specialite}">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{etudiant.specialite.specialite}" />
@@ -193,7 +193,7 @@
 
                             <div align="center">
                                 <p:commandButton value="Ajouter étudiant"  actionListener="#{etudiantControleur.ajouter}" update=":form:table_etudiants :form:growl"/>
-                                <p:commandButton immediate="true" value="Annuler" onclick="PF('dlg').hide()"/>
+                                <p:commandButton immediate="true" value="Annuler" oncomplete="PF('dlg').hide()"/>
                             </div>
                         </p:fieldset>
 

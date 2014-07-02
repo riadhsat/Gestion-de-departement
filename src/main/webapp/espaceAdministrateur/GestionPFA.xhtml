@@ -14,36 +14,41 @@
             <ui:define name="center">
                  <p:growl id="messages" autoUpdate="true" showDetail="true" /> 
                 <h:form id="PfaListForm" style=" margin-left: 208px; margin-right: auto;">
-                <p:panel header="liste des projet fin d'annee">
+                <p:panel>
+                    <f:facet name="header" >
+                        <p:outputLabel value="Projet de fin d'annee" style="color: red;" />                        
+                    </f:facet>
                     <p:dataTable id="datalist" value="#{pfaControleur.pfas}" var="pfa"
                                  selectionMode="single" selection="#{pfaControleur.selected}"
                                  paginator="true" filteredValue="#{pfaControleur.filtrepfas}"
                                  rowKey="#{pfa.codepfa}" rows="10">
-                        <p:ajax event="rowSelect"   update="createButton editButton deleteButton"/>
-                        <p:ajax event="rowUnselect" update="createButton editButton deleteButton"/>
-                        <p:column filterBy="#{pfa.codepfa}" filterStyle="width: 20px;"  >
-                            <f:facet name="header">
-                                <h:outputText value="Code"/>
-                            </f:facet>
-                            <h:outputText value="#{pfa.codepfa}"/>
-                        </p:column>
+                        <p:ajax event="rowSelect"   update="createButton detailButton editButton deleteButton"/>
+                        <p:ajax event="rowUnselect" update="createButton detailButton editButton deleteButton"/>
+                        
                         <p:column filterBy="#{pfa.nomprojet}">
                             <f:facet name="header">
                                 <h:outputText value="Nom projet"/>
                             </f:facet>
                             <h:outputText value="#{pfa.nomprojet}"/>
                         </p:column>
-                        <p:column filterBy="#{pfa.description}">
+                        <p:column filterBy="#{pfa.etudiantByEtuCin.cinetu}">
                             <f:facet name="header">
-                                <h:outputText value="Description"/>
+                                <h:outputText value="CIN Etudiant 1"/>
                             </f:facet>
-                            <h:outputText value="#{pfa.description}"/>
+                            <p:outputLabel value="#{pfa.etudiantByEtuCin.cinetu}" />
                         </p:column>
                         <p:column filterBy="#{pfa.etudiantByEtuCin.nomPrenom}">
                             <f:facet name="header">
                                 <h:outputText value="Etudiant 1"/>
                             </f:facet>
                             <h:outputText value="#{pfa.etudiantByEtuCin.nomPrenom}"/>
+                        </p:column>
+                        <p:column filterBy="#{pfa.etudiantByEtuCin1.cinetu}">
+                            <f:facet name="header">
+                                <h:outputText value="CIN Etudiant 2"/>
+                            </f:facet>
+                            <p:outputLabel rendered="#{pfa.etudiantByEtuCin1 ne null}"
+                                           value="#{pfa.etudiantByEtuCin1.cinetu}" />
                         </p:column>
                         <p:column filterBy="#{pfa.etudiantByEtuCin1.nomPrenom}">
                             <f:facet name="header">
@@ -65,20 +70,15 @@
                             </f:facet>
                             <h:outputText value="#{pfa.encardeur.prenom} #{pfa.encardeur.nom}"/>
                         </p:column>
-                        <p:column filterBy="#{pfa.section.section}">
+                        <p:column filterBy="#{pfa.section.section}" sortBy="#{pfa.section.section}">
                             <f:facet name="header">
                                 <h:outputText value="Section"/>
                             </f:facet>
                             <h:outputText value="#{pfa.section.section}"/>
                         </p:column>
-                        <p:column filterBy="#{pfa.specialite.specialite}">
-                            <f:facet name="header">
-                                <h:outputText value="Specialite"/>
-                            </f:facet>
-                            <h:outputText value="#{pfa.specialite.specialite}"/>
-                        </p:column>
                         <f:facet name="header">
                             <p:commandButton id="createButton" icon="ui-icon-plus"   value="Ajouter" actionListener="#{pfaControleur.prepareCreate}" update=":PfaCreateForm" oncomplete="PF('PfaCreateDialog').show()"/>
+                            <p:commandButton id="detailButton"   icon="ui-icon-search" value="Detail" update=":PfaDetailForm" oncomplete="PF('PfaDetailDialog').show()" disabled="#{empty pfaControleur.selected}"/>
                             <p:commandButton id="editButton"   icon="ui-icon-pencil" value="Modifier" update=":PfaEditForm" oncomplete="PF('PfaEditDialog').show()" disabled="#{empty pfaControleur.selected}"/>
                             <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="Supprimer" actionListener="#{pfaControleur.supprimer}" update="datalist" disabled="#{empty pfaControleur.selected}"/>
                         </f:facet>
@@ -144,7 +144,7 @@
                     <div style="text-align: center">
                     <p:commandButton type="submit"  actionListener="#{pfaControleur.ajouter}" value="Ajouter" update="display,:PfaListForm:datalist"
                                      oncomplete="PfaCreateDialog.hide()"/>
-                    <p:commandButton immediate="true" value="annuler" onclick="PfaCreateDialog.hide()"/></div>
+                    <p:commandButton immediate="true" value="Annuler" oncomplete="PfaCreateDialog.hide()" /></div>
                  </h:panelGroup>
                  </p:fieldset>
             </h:form>      
@@ -203,11 +203,53 @@
                     <div style="text-align: center">
                     <p:commandButton  type="submit"  actionListener="#{pfaControleur.modifier}" value="modifier" update="display,:PfaListForm:datalist"
                                      oncomplete="PfaEditDialog.hide()"/>
-                    <p:commandButton immediate="true" value="annuler" onclick="PfaEditDialog.hide()"/></div>
+                    <p:commandButton immediate="true" value="Annuler" oncomplete="PfaEditDialog.hide()"/></div>
                 </h:panelGroup>
                 </p:fieldset>
             </h:form>
         </p:dialog>
+                  <p:dialog id="PfaDetailDlg" widgetVar="PfaDetailDialog" modal="true" resizable="false"
+                            appendTo="@(body)"  dynamic="true" closable="false" draggable="false">
+                     <h:form id="PfaDetailForm">
+                         <p:fieldset legend="Information">
+                             <h:panelGrid columns="2" >
+                                 <p:outputLabel value="Code :" />
+                                 <p:outputLabel value="#{pfaControleur.selected.codepfa}" />
+                                 <p:outputLabel value="Nom projet :"  />
+                                 <p:outputLabel value="#{pfaControleur.selected.nomprojet}" />
+                                 <p:outputLabel value="Description :" />
+                                 <p:outputLabel value="#{pfaControleur.selected.description}" />
+                                 <p:outputLabel value="CIN Etudiant 1 :"/>
+                                 <p:outputLabel value="#{pfaControleur.selected.etudiantByEtuCin.cinetu}" />
+                                 <p:outputLabel value="Etudiant 1 :"/>
+                                 <p:outputLabel value="#{pfaControleur.selected.etudiantByEtuCin.nomPrenom}" />
+                                 <p:outputLabel value="CIN Etudiant 2 :"/>
+                                 <p:column>
+                                     <p:outputLabel value="Non définie"
+                                                rendered="#{pfaControleur.selected.etudiantByEtuCin1 eq null}"/>
+                                     <p:outputLabel value="#{pfaControleur.selected.etudiantByEtuCin1.cinetu}"
+                                                rendered="#{pfaControleur.selected.etudiantByEtuCin1 ne null}"/>                                 
+                                 </p:column>
+                                 <p:outputLabel value="Etudiant 2 :"/>
+                                 <p:column>
+                                     <p:outputLabel value="Non définie"
+                                                rendered="#{pfaControleur.selected.etudiantByEtuCin1 eq null}"/>
+                                     <p:outputLabel value="#{pfaControleur.selected.etudiantByEtuCin1.nomPrenom}"
+                                                    rendered="#{pfaControleur.selected.etudiantByEtuCin1 ne null}" />
+                                 </p:column>
+                                 <p:outputLabel value="Encadreur :" />
+                                 <p:outputLabel value="#{pfaControleur.selected.encardeur.prenom} #{pfaControleur.selected.encardeur.nom}" />
+                                 <p:outputLabel value="Section :" />
+                                 <p:outputLabel value="#{pfaControleur.selected.section.section}" />
+                                 <p:outputLabel value="Specialite" />
+                                 <p:outputLabel value="#{pfaControleur.selected.specialite.specialite}" />                                 
+                             </h:panelGrid> 
+                             <div style="text-align: center">
+                                 <p:commandButton  value="Quitter" oncomplete="PF('PfaDetailDialog').hide()"/>
+                             </div>
+                         </p:fieldset>
+                     </h:form> 
+                 </p:dialog>
             </ui:define>         
         </ui:composition>
     </h:body>

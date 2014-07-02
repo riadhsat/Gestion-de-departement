@@ -35,11 +35,12 @@
                         </f:facet>
 
                         <!--Le champ du CIN (cle primaire) ne doit pas etre mis a jour-->
-                        <p:column headerText="CIN" filterBy="cinEnseignant" sortBy="cinEnseignant">
+                        <p:column headerText="CIN" filterBy="#{enseignant.cinEnseignant}"
+                                  sortBy="#{enseignant.cinEnseignant}">
                             <h:outputText value="#{enseignant.cinEnseignant}"/>
                         </p:column>
 
-                        <p:column headerText="Nom" filterBy="nom">
+                        <p:column headerText="Nom" filterBy="#{enseignant.nom}">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{enseignant.nom}" />
@@ -49,7 +50,7 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Prénom" filterBy="prenom">
+                        <p:column headerText="Prénom" filterBy="#{enseignant.prenom}">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{enseignant.prenom}" />
@@ -59,7 +60,7 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Grade" filterBy="grade.grade">
+                        <p:column headerText="Grade" filterBy="#{enseignant.grade.grade}">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{enseignant.grade.grade}" />
@@ -72,7 +73,7 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Mail" filterBy="mail">
+                        <p:column headerText="Email" filterBy="#{enseignant.mail}">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{enseignant.mail}" />
@@ -82,7 +83,7 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Tel" filterBy="tel">
+                        <p:column headerText="Tel" filterBy="#{enseignant.tel}">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{enseignant.tel}" />
@@ -167,7 +168,7 @@
                         </h:panelGrid>
                         <div align="center">
                             <p:commandButton id="submit" value="Ajouter"  actionListener="#{enseignantControleur.ajouter()}" update=":form:table_enseignants :form:growl" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
-                            <p:commandButton immediate="true" value="Annuler" onclick="PF('dlg').hide()"/>
+                            <p:commandButton immediate="true" value="Annuler" oncomplete="PF('dlg').hide()"/>
                         </div>
                         </p:fieldset>
                     </h:form>
