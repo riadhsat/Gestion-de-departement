@@ -20,6 +20,7 @@
                 <!-- haut de page -->
                 <p:layoutUnit position="north" styleClass="layout_north" size="100" resizable="false" closable="false" collapsible="true">
                     <h:graphicImage value="/resources/img/logo_fst.png" id="logofst" alt="fst"/>
+                    
                     <h:form id="user_panel">
                         <h:panelGrid columns="2">
                             <h:panelGrid columns="1" cellpadding="3">
@@ -45,12 +46,10 @@
                 <p:layoutUnit position="center">
                     <ui:insert name="center"/>
                     <ui:insert name="script"/>
-                </p:layoutUnit> 
+                </p:layoutUnit>
 
-
-                    <!-- Menu Gauche -->
-                    <p:layoutUnit position="west" styleClass="menuGauche" size="190" resizable="false" closable="false" collapsible="true">
-
+                <!-- Menu Gauche --> 
+                <p:layoutUnit position="west" styleClass="menuGauche" size="190" resizable="false" closable="false" collapsible="true">
                     <h:form style="width:170px; position:absolute; margin-top: 30px;">
                         <p:panelMenu>
                             <p:submenu label="Planning">
@@ -95,7 +94,7 @@
                             </p:submenu>
                             <p:separator />                                            
                         </p:panelMenu>                           
-                    </h:form>               
+                    </h:form>
                 </p:layoutUnit>
             </p:layout>
             <pe:blockUI widgetVar="blockUIWidget">
@@ -109,4 +108,3 @@
 
     </f:view>
 </html>
-
