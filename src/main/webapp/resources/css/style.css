@@ -25,18 +25,16 @@ img#logofst{
     /*box-shadow: 1px 1px 12px #666;*/
 }
 .layout_north .ui-layout-unit-content{
-    /*background-image: url(../img/grey_banner.png);*/
-    /*background:   no-repeat 50% 50%;*/
     background-color: rgba(186,186,186,.2) ;
-    /*background-size: 90% 10%;*/
     padding: 2px auto;
     overflow: visible;
     z-index: 20; 
+    box-shadow: 1px 1px 15px #666;
 }
-.layout_south .ui-layout-unit-content{
-    background: url(../img/grey_banner.png) no-repeat 50% 50%;
-    background-size: 110% 110%;
+.menuGauche .ui-layout-unit-content{
+    box-shadow: 1px 1px 10px #666;
 }
+
 .ui-widget {
     font-size: 12px;
 }
@@ -47,38 +45,7 @@ img#logofst{
 .ui-button {
     margin-top: 10px;
 }
-.layout_center .ui-layout-unit-content {
-    text-align: center;
-}
 
-.layout_center .ui-layout-unit-content form {
-    /*width: 570px;*/
-    position: absolute;
-    margin-left: 20px;
-    margin-top: 30px;
-}
-.layout_center .ui-layout-unit-content form#choixEns{
-    position: absolute;
-    margin-left: 50px;
-    margin-top: 1px;
-}
-
-.layout_center .ui-layout-unit-content form#formajoutetudiant{
-    position: absolute;
-    margin-left: 100px;
-    margin-top: 30px;
-}
-.layout_west .ui-layout-unit-content * {
-    width: 200px;
-    padding: 0;
-    text-align: center;
-}
-.layout_west .ui-layout-unit-content form,.layout_east .ui-layout-unit-content form{
-    width: 170px;
-}
-.layout_east .ui-layout-unit-content *{
-    width: 200px;
-}
 #ajaxStatusPanel{
     width: 50%;
     margin: 200px auto;

@@ -9,61 +9,61 @@
     <h:head/>
     <h:body>
         <ui:composition template="template_espace_administrateur.xhtml">
-             <ui:define name="title">
+            <ui:define name="title">
                 Exportation Par Salle
             </ui:define>
-             <ui:define name="center">
-                 <h:form id="form" style=" margin-left: 210px; margin-right: auto;">
-                <h:panelGrid columns="4" cellpadding="10" style="width: 700px;margin: auto;">
-                            <p:outputLabel for="select_salle" value="Exportation par Salle :"/>
-                            <p:selectOneMenu id="select_salle" value="#{exportControleur.salle}"
-                                             converter="genericConverter" style="width: 150px">
-                                <f:ajax  render="@form"/>
-                                <f:selectItem itemLabel="Toute Salle" itemValue="#{null}"/>
-                                <f:selectItems var="salle" value="#{salleControleur.salles}"
-                                               itemLabel="#{salle.salle}" itemValue="#{salle}"/>
-                                <p:ajax update="projet"                                           
-                                        listener="#{exportControleur.affiche}"
-                                        onstart="PF('blockUIWidget').block()"
-                                        oncomplete="PF('blockUIWidget').unblock()"/>
-                            </p:selectOneMenu>
-                        </h:panelGrid>
-                 <p:dataTable id="projet" var="pfe" value="#{exportControleur.pfes}"
-                              rowKey="#{pfe.codepfe}" paginator="true" rows="10"
+            <ui:define name="center">
+                <h:form id="form">
+                    <h:panelGrid columns="4" cellpadding="10" style="width: 700px;margin: auto;">
+                        <p:outputLabel for="select_salle" value="Exportation par Salle :"/>
+                        <p:selectOneMenu id="select_salle" value="#{exportControleur.salle}"
+                                         converter="genericConverter" style="width: 150px">
+                            <f:ajax  render="@form"/>
+                            <f:selectItem itemLabel="Toute Salle" itemValue="#{null}"/>
+                            <f:selectItems var="salle" value="#{salleControleur.salles}"
+                                           itemLabel="#{salle.salle}" itemValue="#{salle}"/>
+                            <p:ajax update="projet"                                           
+                                    listener="#{exportControleur.affiche}"
+                                    onstart="PF('blockUIWidget').block()"
+                                    oncomplete="PF('blockUIWidget').unblock()"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    <p:dataTable id="projet" var="pfe" value="#{exportControleur.pfes}"
+                                 rowKey="#{pfe.codepfe}" paginator="true" rows="10"
                                  emptyMessage="Aucun projet">
-                     <f:facet name="header">
-                        Liste des Projets <h:outputText value=" Salle :#{exportControleur.salle.salle}" 
-                                       rendered="#{exportControleur.salle ne null}" />
+                        <f:facet name="header">
+                            Liste des Projets <h:outputText value=" Salle :#{exportControleur.salle.salle}" 
+                                                            rendered="#{exportControleur.salle ne null}" />
                         </f:facet>
-                     <p:column headerText="Date Soutenance" >                      
-                         <h:outputText value="#{pfe.datesoutenance}">
-                             <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
-                         </h:outputText>
+                        <p:column headerText="Date Soutenance" >                      
+                            <h:outputText value="#{pfe.datesoutenance}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                            </h:outputText>
                         </p:column>
-                     <p:column headerText="Salle" rendered="#{exportControleur.salle eq null}">
-                         <h:outputText value="#{pfe.salle.salle}"/>
+                        <p:column headerText="Salle" rendered="#{exportControleur.salle eq null}">
+                            <h:outputText value="#{pfe.salle.salle}"/>
                         </p:column>
-                 <p:column headerText="Nom de projet" >
-                     <h:outputText value="#{pfe.nomprojet}"/>
+                        <p:column headerText="Nom de projet" >
+                            <h:outputText value="#{pfe.nomprojet}"/>
                         </p:column>
-                 <p:column headerText="President" >
-                     <h:outputText value="#{pfe.chefjury.prenom} #{pfe.chefjury.nom}"/>
+                        <p:column headerText="President" >
+                            <h:outputText value="#{pfe.chefjury.prenom} #{pfe.chefjury.nom}"/>
                         </p:column>
-                     <p:column headerText="Rapporteur">
-                         <h:outputText value="#{pfe.rapporteur.prenom} #{pfe.rapporteur.nom}"/>
+                        <p:column headerText="Rapporteur">
+                            <h:outputText value="#{pfe.rapporteur.prenom} #{pfe.rapporteur.nom}"/>
                         </p:column>
-                     <p:column headerText="Encadreur" >
-                         <h:outputText value="#{pfe.encadreur.prenom} #{pfe.encadreur.nom}"/>
+                        <p:column headerText="Encadreur" >
+                            <h:outputText value="#{pfe.encadreur.prenom} #{pfe.encadreur.nom}"/>
                         </p:column>
-                     <p:column headerText="Cin:Etudiant 1" >
-                         <h:outputText value="#{pfe.etudiantByEtuCin.cinetu}  #{pfe.etudiantByEtuCin.nomPrenom}"/>
+                        <p:column headerText="Cin:Etudiant 1" >
+                            <h:outputText value="#{pfe.etudiantByEtuCin.cinetu}  #{pfe.etudiantByEtuCin.nomPrenom}"/>
                         </p:column>
-                     <p:column headerText="Cin:Etudiant 2" >
-                         <h:outputText value="#{pfe.etudiantByEtuCin1.cinetu}  #{pfe.etudiantByEtuCin1.nomPrenom}"/>
+                        <p:column headerText="Cin:Etudiant 2" >
+                            <h:outputText value="#{pfe.etudiantByEtuCin1.cinetu}  #{pfe.etudiantByEtuCin1.nomPrenom}"/>
                         </p:column>
-                 </p:dataTable>
-                     
-                     <p:panel header="Exporter en PDF et Excel">
+                    </p:dataTable>
+
+                    <p:panel header="Exporter en PDF et Excel">
                         <p:commandLink id="pdf" ajax="false">
                             <p:graphicImage value="/resources/img/pdf.png"/>
                             <p:dataExporter type="pdf" target="projet" fileName="Planning #{exportControleur.salle.salle}" preProcessor="#{exportControleur.ajoutEnTetePDF}"/>
@@ -74,22 +74,22 @@
                             <pe:exporter type="xls" target="projet" tableTitle="Planning" fileName="Planning #{exportControleur.salle.salle}"/>
                         </p:commandLink>
                     </p:panel>
-                <!--    <p:panel header="Exporter en PDF et Excel">
-                        <p:commandLink id="pdf" ajax="false">
-                            <p:graphicImage value="/resources/img/pdf.png"/>
-                            <pe:exporter type="pdf" target="projet" fileName="Planning {exportControleur.salle.salle}" datasetPadding="10" orientation="Landscape"/>
-                        </p:commandLink>
-                        <p:spacer width="20"/>
-                        <p:commandLink id="xlsx" ajax="false">
-                            <p:graphicImage value="/resources/img/excel.png"/>
-                            <pe:exporter type="xls" target="projet" tableTitle="Planning" fileName="Planning {exportControleur.salle.salle}"/>
-                        </p:commandLink>
-                    </p:panel>-->
-                 
-            
-            </h:form>
-             </ui:define>
-            </ui:composition>
+                    <!--    <p:panel header="Exporter en PDF et Excel">
+                            <p:commandLink id="pdf" ajax="false">
+                                <p:graphicImage value="/resources/img/pdf.png"/>
+                                <pe:exporter type="pdf" target="projet" fileName="Planning {exportControleur.salle.salle}" datasetPadding="10" orientation="Landscape"/>
+                            </p:commandLink>
+                            <p:spacer width="20"/>
+                            <p:commandLink id="xlsx" ajax="false">
+                                <p:graphicImage value="/resources/img/excel.png"/>
+                                <pe:exporter type="xls" target="projet" tableTitle="Planning" fileName="Planning {exportControleur.salle.salle}"/>
+                            </p:commandLink>
+                        </p:panel>-->
+
+
+                </h:form>
+            </ui:define>
+        </ui:composition>
     </h:body>
 </html>
 
