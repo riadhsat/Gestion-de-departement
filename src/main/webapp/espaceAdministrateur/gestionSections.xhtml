@@ -49,7 +49,7 @@
                                     <h:outputText value="#{section.section}" />                     
                         </p:column>
                         
-                            <p:column style="width: 6%;">
+                            <p:column style="width: 4%;">
                             <p:commandButton id="EditButton" icon="ui-icon-pencil" immediate="true"
                                              update="table_sections :editsection"
                                              oncomplete="PF('dlgEdit').show()">
@@ -57,7 +57,7 @@
                                                              target="#{sectionControleur.newSection}" />
                             </p:commandButton>
                         </p:column>                       
-                        <p:column style="width: 6%;">
+                        <p:column style="width: 4%;">
                             <p:commandButton id="deleteButton" icon="ui-icon-trash" update="table_sections"
                                              actionListener="#{sectionControleur.supprimer(section)}"/>
                         </p:column>
