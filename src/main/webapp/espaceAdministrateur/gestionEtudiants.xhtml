@@ -12,7 +12,7 @@
                 Gestion des Etudiants
             </ui:define>
             <ui:define name="center">
-                <h:form id="form" style=" margin-left: 210px; margin-right: auto;">
+                <h:form id="form">
                     <p:growl showDetail="true" autoUpdate="true" life="2000" id="growl"/>
                     <p:commandButton style="float: right;" icon="ui-icon-plusthick"
                                      oncomplete="PF('dlg').show();" value="Ajouter Etudiant"/>
@@ -68,7 +68,7 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Email" filterBy="#{etudiant.mail}">
+                        <p:column headerText="Email" filterBy="#{etudiant.mail}" width="200">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{etudiant.mail}" />
@@ -105,10 +105,10 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column style="width: 6%;">
+                        <p:column style="width: 4%;">
                             <p:rowEditor/>
                         </p:column>
-                        <p:column style="width: 6%;">
+                        <p:column style="width: 4%;">
                             <p:commandButton icon="ui-icon-trash" actionListener="#{etudiantControleur.supprimer(etudiant)}" update=":form:growl :form:table_etudiants"/>
                         </p:column>
                     </p:dataTable>

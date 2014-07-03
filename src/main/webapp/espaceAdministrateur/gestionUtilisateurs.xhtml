@@ -14,7 +14,7 @@
             </ui:define>
             <ui:define name="center">
 
-                <h:form id="form" style=" margin-left: 210px; margin-right: auto;">
+                <h:form id="form">
                     <p:growl showDetail="true" autoUpdate="true" life="2000" id="growl"/>
 
                     <p:commandButton style="float: right;" icon="ui-icon-plusthick" update=":adduser"
@@ -34,20 +34,20 @@
                             Liste des Utilisateurs
                         </f:facet>
 
-                        <p:column headerText="CIN Utilisateurs" filterBy="cin" sortBy="cin">
+                        <p:column headerText="CIN Utilisateurs" filterBy="#{utilisateur.cin}" sortBy="#{utilisateur.cin}">
                             <f:facet name="header">
                                 <h:outputText value="CIN"/>
                             </f:facet>
                             <h:outputText value="#{utilisateur.cin}"/>
                         </p:column>
 
-                        <p:column filterBy="login">      
+                        <p:column filterBy="#{utilisateur.login}">      
                             <f:facet name="header">
                                     <h:outputText value="Nom d'utilisateur" />
                             </f:facet>
                             <h:outputText value="#{utilisateur.login}" />
                         </p:column>
-                        <p:column filterBy="type">                            
+                        <p:column filterBy="#{utilisateur.type}">                            
                                 <f:facet name="header">
                                     <h:outputText value="Type"/>
                                 </f:facet>  

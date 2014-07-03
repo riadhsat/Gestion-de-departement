@@ -176,6 +176,11 @@
         <pattern value="/Espace_Etudiant/Compte"/>
         <view-id value="/espaceEtudiant/modifier_compte.xhtml"/>
     </url-mapping>
+    
+    <url-mapping id="ImportRapport">
+        <pattern value="/Espace_Etudiant/envoie_Rapport"/>
+        <view-id value="/espaceEtudiant/importer_rapport.xhtml"/>
+    </url-mapping>
 
 
 

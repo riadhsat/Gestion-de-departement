@@ -14,7 +14,7 @@
             <ui:define name="center">
 
                     
-                     <h:form id="form" style=" margin-left: 210px; margin-right: auto;">
+                     <h:form id="form">
                     <p:growl showDetail="true" autoUpdate="true" life="2000" id="growl"/>
                     
                      <p:commandButton style="float: right;" icon="ui-icon-plusthick" update=":addgrade"
@@ -34,14 +34,14 @@
                             Liste des Specialité
                         </f:facet>
 
-                        <p:column headerText="Code specialité" filterBy="codespe" sortBy="codespe">
+                        <p:column headerText="Code specialité" filterBy="#{specialite.codespe}" sortBy="#{specialite.codespe}">
                             <f:facet name="header">
                                 <h:outputText value="Code"/>
                             </f:facet>
                             <h:outputText value="#{specialite.codespe}"/>
                         </p:column>                        
 
-                        <p:column headerText="Specialite" filterBy="specialite"> 
+                        <p:column headerText="Specialite" filterBy="#{specialite.specialite}"> 
                             <f:facet name="header">
                                 <h:outputText value="Specialité"/>                                
                             </f:facet>                                

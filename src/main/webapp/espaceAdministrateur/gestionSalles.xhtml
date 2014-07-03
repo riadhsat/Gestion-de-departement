@@ -13,7 +13,7 @@
             </ui:define>
             <ui:define name="center">
 
-                <h:form id="form" style=" margin-left: 210px; margin-right: auto;">
+                <h:form id="form">
                     <p:growl showDetail="true" autoUpdate="true" life="2000" id="growl"/>
                      <p:commandButton style="float: right;" icon="ui-icon-plusthick" update=":addsalle"
                                       actionListener="#{salleControleur.prepareCreate}"
@@ -32,14 +32,14 @@
                             Liste des Salles
                         </f:facet>
 
-                        <p:column headerText="Code Salle" filterBy="codesal" sortBy="codesal">
+                        <p:column headerText="Code Salle" filterBy="#{salle.codesal}" sortBy="#{salle.codesal}">
                             <f:facet name="header">
                                 <h:outputText value="Code"/>
                             </f:facet>
                             <h:outputText value="#{salle.codesal}"/>
                         </p:column>                        
 
-                        <p:column headerText="Salle" filterBy="salle"> 
+                        <p:column headerText="Salle" filterBy="#{salle.salle}"> 
                             <f:facet name="header">
                                 <h:outputText value="Salle"/>                                
                             </f:facet>                                
@@ -72,9 +72,8 @@
                             <p:outputLabel value="Salle :" for="salle"/>
                             <p:inputText id="salle" validatorMessage="Entrer une Salle valide"
                                          value="#{salleControleur.newSalle.salle}">
-                                <p:ajax update="msgSalle" event="keyup" />
-                                <f:validateRegex pattern="[^0-9]+" for="salle"/>
-                                <f:validateLength minimum="3" maximum="254" for="salle"/>
+                                <p:ajax update="msgSalle" event="keyup" />                                
+                                <f:validateLength minimum="2" maximum="10" for="salle"/>
                             </p:inputText>
                             <p:message for="salle" id="msgSalle"/>
                         </h:panelGrid>

@@ -14,7 +14,7 @@
                 Gestion Enseignants
             </ui:define>
             <ui:define name="center">
-                <h:form id="form" style=" margin-left: 210px; margin-right: auto;">
+                <h:form id="form">
                     <p:growl showDetail="true" autoUpdate="true" sticky="false" life="3000" id="growl"/>
 
                     <p:commandButton style="float: right; margin-top: 20px" icon="ui-icon-plusthick"
@@ -73,7 +73,7 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Email" filterBy="#{enseignant.mail}">
+                        <p:column headerText="Email" filterBy="#{enseignant.mail}" width="200">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{enseignant.mail}" />
@@ -92,11 +92,11 @@
                                     <p:inputText value="#{enseignant.tel}" id="tel_ed"/>
                                 </f:facet>
                             </p:cellEditor>
-                        </p:column>
-                        <p:column exportable="false" style="width: 6%;">
+                        </p:column> 
+                        <p:column exportable="false" style="width: 4%;">
                             <p:rowEditor/>
                         </p:column>
-                        <p:column exportable="false" style="width: 6%;">
+                        <p:column exportable="false" style="width: 4%;">                           
                             <p:commandButton icon="ui-icon-trash" actionListener="#{enseignantControleur.supprimer(enseignant)}" update=":form:table_enseignants" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
                         </p:column>
                     </p:dataTable>

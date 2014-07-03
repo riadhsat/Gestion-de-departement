@@ -13,7 +13,7 @@
             </ui:define>
             <ui:define name="center">
 
-                <h:form id="form" style=" margin-left: 210px; margin-right: auto;">
+                <h:form id="form">
                     <p:growl showDetail="true" autoUpdate="true" life="2000" id="growl"/>
                     
                      <p:commandButton style="float: right;" icon="ui-icon-plusthick" update=":addgrade"
@@ -33,14 +33,14 @@
                             Liste des Grades
                         </f:facet>
 
-                        <p:column headerText="Code Grade" filterBy="codegra" sortBy="codegra">
+                        <p:column headerText="Code Grade" filterBy="#{grade.codegra}" sortBy="#{grade.codegra}">
                             <f:facet name="header">
                                 <h:outputText value="Code"/>
                             </f:facet>
                             <h:outputText value="#{grade.codegra}"/>
                         </p:column>                        
 
-                        <p:column headerText="Grade" filterBy="grade"> 
+                        <p:column headerText="Grade" filterBy="#{grade.grade}"> 
                             <f:facet name="header">
                                 <h:outputText value="Grade"/>                                
                             </f:facet>                                

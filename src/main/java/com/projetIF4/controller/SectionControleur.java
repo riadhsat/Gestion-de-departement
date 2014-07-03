@@ -59,8 +59,8 @@ public class SectionControleur implements Serializable{
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "SUCCES",
                             "ajout avec succes "));
-            RequestContext.getCurrentInstance().execute("PF('dlgadd').hide();");
-            sections = getAllSection();        
+            sections = getAllSection();
+            RequestContext.getCurrentInstance().execute("PF('dlgadd').hide();");                    
         }else{
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "L'ajout de la section a échoué !"));        

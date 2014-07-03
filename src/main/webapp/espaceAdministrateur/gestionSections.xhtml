@@ -14,7 +14,7 @@
             </ui:define>
             <ui:define name="center">
 
-                <h:form id="form" style=" margin-left: 210px; margin-right: auto;">
+                <h:form id="form">
                     <p:growl showDetail="true" autoUpdate="true" life="2000" id="growl"/>
 
                      <p:commandButton style="float: right;" icon="ui-icon-plusthick" update=":addsection"
@@ -35,14 +35,14 @@
                             Liste des Sections
                         </f:facet>
 
-                        <p:column headerText="Code Section" filterBy="codesec" sortBy="codesec">                            
+                        <p:column headerText="Code Section" filterBy="#{section.codesec}" sortBy="#{section.codesec}">                            
                             <f:facet name="header">
                                 <h:outputText value="Code"/>
                             </f:facet>
                             <h:outputText value="#{section.codesec}"/>
                         </p:column>
 
-                        <p:column headerText="Section" filterBy="section">                            
+                        <p:column headerText="Section" filterBy="#{section.section}">                            
                             <f:facet name="header">
                                 <h:outputText value="Section"/>
                             </f:facet>                         

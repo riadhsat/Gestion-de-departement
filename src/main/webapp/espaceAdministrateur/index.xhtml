@@ -12,8 +12,7 @@
             <ui:define name="title">
                 Espace Administrateur
             </ui:define>
-            <ui:define name="center" id="def_center">
-                <div style=" margin-left: 210px">                   
+            <ui:define name="center" id="def_center">                   
                 <h:form>
                         <p:fieldset legend="Statistiques">
                             <p:growl id="growl" showDetail="true"/>
@@ -69,7 +68,6 @@
                             <p:chart id="c4" type="pie" model="#{adminIndexControleur.pfePlanModel}" style="width: 700px;height:500px;"/>
                         </p:dialog>
                     </h:form>
-                </div>
             </ui:define>
             
         </ui:composition>
