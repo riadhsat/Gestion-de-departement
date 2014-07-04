@@ -452,8 +452,6 @@ public class Etudiant implements java.io.Serializable {
      */
      public boolean save() {
         final Session session = HibernateUtil.currentSession();
-        session.setFlushMode(FlushMode.COMMIT);
-        session.setCacheMode(CacheMode.REFRESH);
         try {
             final Transaction transaction = session.beginTransaction();
 

@@ -12,15 +12,24 @@
                 Gestion des Etudiants
             </ui:define>
             <ui:define name="center">
-                <h:form id="form">
-                    <p:growl showDetail="true" autoUpdate="true" life="2000" id="growl"/>
-                    <p:commandButton style="float: right;" icon="ui-icon-plusthick"
-                                     oncomplete="PF('dlg').show();" value="Ajouter Etudiant"/>
 
+                <h:form style="float: right">
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <p:commandButton style="float: right;" icon="ui-icon-plusthick"
+                                         oncomplete="PF('dlg').show();" value="Ajouter Etudiant"/>
+                        <p:commandButton style="float: right;" icon="ui-icon-document"
+                                         oncomplete="PF('dlgImport').show();" value="Importer liste Etudiants (Fichier Excell)"/>
+
+
+                    </h:panelGrid>
+                </h:form>
+
+                <h:form id="form">
+                    <p:growl showDetail="true" autoUpdate="true" life="2000" id="growl"/>    
                     <p:dataTable var="etudiant" value="#{etudiantControleur.etudiants}"
                                  rowKey="#{etudiant.cinetu}" paginator="true" rows="10"
                                  id="table_etudiants" emptyMessage="Aucun etudiant"
-                                 selectionMode="single" editable="true"
+                                 selectionMode="single" editable="true" style="margin-top: 60px"
                                  filteredValue="#{etudiantControleur.filtredEtudiants}">
 
                         <p:ajax event="rowEdit" listener="#{etudiantControleur.update}" update=":form:growl :form:table_etudiants" />
@@ -31,14 +40,14 @@
                         </f:facet>
 
                         <!--Le champ du CIN (cle primaire) ne doit pas etre mis a jour-->
-                        <p:column headerText="CIN" filterBy="#{etudiant.cinetu}" sortBy="#{etudiant.cinetu}">
+                        <p:column headerText="CIN" filterBy="#{etudiant.cinetu}" sortBy="#{etudiant.cinetu}" width="10%">
                             <h:outputText value="#{etudiant.cinetu}"/>
                         </p:column>
-                        <p:column headerText="N°Inscription" filterBy="#{etudiant.ins}">
+                        <p:column headerText="N°Inscription" sortBy="#{etudiant.ins}" filterBy="#{etudiant.ins}" width="10%">
                             <h:outputText value="#{etudiant.ins}"/>
                         </p:column>
 
-                        <p:column headerText="Nom et Prénom" filterBy="#{etudiant.nomPrenom}">
+                        <p:column headerText="Nom et Prénom" sortBy="#{etudiant.nomPrenom}" filterBy="#{etudiant.nomPrenom}">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{etudiant.nomPrenom}" />
@@ -53,14 +62,14 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Date de naissance" filterBy="#{etudiant.datenaissance}">
+                        <p:column headerText="Date de naissance" sortBy="#{etudiant.datenaissance}" filterBy="#{etudiant.datenaissance}">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{etudiant.datenaissance}"  >
                                         <f:convertDateTime pattern="dd/MM/yyyy"/>
-                                    
+
                                     </h:outputText>
-                                    
+
                                 </f:facet>
                                 <f:facet name="input">
                                     <p:calendar locale="fr" value="#{etudiant.datenaissance}"
@@ -68,7 +77,7 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Email" filterBy="#{etudiant.mail}" width="200">
+                        <p:column headerText="Email" sortBy="#{etudiant.mail}" filterBy="#{etudiant.mail}" width="12%">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{etudiant.mail}" />
@@ -79,7 +88,7 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Section" filterBy="#{etudiant.section.section}">
+                        <p:column headerText="Section" sortBy="#{etudiant.section.section}" filterBy="#{etudiant.section.section}" width="10%">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{etudiant.section.section}" />
@@ -92,7 +101,7 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column headerText="Spécialite" filterBy="#{etudiant.specialite.specialite}">
+                        <p:column headerText="Spécialite" sortBy="#{etudiant.specialite.specialite}" filterBy="#{etudiant.specialite.specialite}">
                             <p:cellEditor>
                                 <f:facet name="output">
                                     <h:outputText value="#{etudiant.specialite.specialite}" />
@@ -105,30 +114,41 @@
                                 </f:facet>
                             </p:cellEditor>
                         </p:column>
-                        <p:column style="width: 4%;">
+                        <p:column style="width: 2%;">
                             <p:rowEditor/>
                         </p:column>
-                        <p:column style="width: 4%;">
+                        <p:column style="width: 2%;">
                             <p:commandButton icon="ui-icon-trash" actionListener="#{etudiantControleur.supprimer(etudiant)}" update=":form:growl :form:table_etudiants"/>
                         </p:column>
                     </p:dataTable>
                 </h:form>
 
-                <p:dialog header="Ajout Etudiant" modal="true" appendTo="@(body)" resizable="false"
-                          width="700" height="500" draggable="false" widgetVar="dlg" closable="false">
-
+                <p:dialog header="Importation de la liste des Etudiants (fichier Excell)" modal="true" appendTo="@(body)" resizable="false" closeOnEscape="true"
+                          width="700" height="300" draggable="false" widgetVar="dlgImport" closable="true" >
                     <h:form enctype="multipart/form-data" id="formupload">
                         <p:fieldset legend="Imporatation à partir d'un fichier Excell" >
-                            <h:panelGrid id="grid" columns="3" cellpadding="5">
-                                <p:fileUpload id="upload" value="#{fichierEtudiantUpload.file}" mode="simple"/>
-                                <p:message for="upload" id="msgUpload"/>
-
+                            <p:messages id="msgFile" autoUpdate="true" showDetail="true"/> 
+                            
+                            <h:panelGrid id="grid" columns="2" cellpadding="5">
+                                <p:outputLabel value="Choisissez le fichier Excell  :" for="upload"/>
+                                <p:fileUpload id="upload" value="#{fichierEtudiantUpload.file}" mode="simple" allowTypes="/(\.|\/)(xls|xlsx)$/"
+                                              cancelLabel="Annuler" fileLimit="1" invalidFileMessage="Veuillez choisir un fichier Excell valide"
+                                              fileLimitMessage="Vous pouvez choisir un seul fichier à la fois" invalidSizeMessage="Fichier trop volumineux !" 
+                                              uploadLabel="Télécharger" required="true" requiredMessage="Vous devez sélectionner un fichier" update="msgFile"/>
+                                
+                                <p:outputLabel value="Entrer le numéro de la prmière ligne du fichier   :" for="premLine"/>
+                                <p:inputText id="premLine" value="#{fichierEtudiantUpload.premLine}" required="true" 
+                                             requiredMessage="Ce champs est obligatoire"/>
                             </h:panelGrid>
                             <div align="center">
                                 <p:commandButton value="Ajouter" ajax="false" action="#{fichierEtudiantUpload.upload()}" update=":form:growl,msgUpload"/>
                             </div>
                         </p:fieldset>
                     </h:form>
+                </p:dialog>
+
+                <p:dialog header="Ajout Etudiant" modal="true" appendTo="@(body)" resizable="false" closeOnEscape="true"
+                          width="700" height="350" draggable="false" widgetVar="dlg" closable="true" >
                     <h:form id="formajoutetudiant">
                         <p:fieldset legend="Ajout Manuel d'étudiants">
                             <h:panelGrid id="grid2" columns="3" cellpadding="5">
@@ -163,25 +183,25 @@
                                     <f:ajax render="@form" />
                                     <f:selectItems var="section" value="#{sectionControleur.sections}"
                                                    itemLabel="#{section.section}" itemValue="#{section}"/>
-                                   
+
                                 </p:selectOneMenu>
                                 <p:message for="section" id="msgsection"/>
-                                
+
                                 <p:outputLabel for="specialite_et" value="Spécialité"/>
                                 <p:selectOneMenu id="specialite_et" value="#{etudiantControleur.etudiant.specialite}"
                                                  converter="genericConverter">
                                     <f:ajax render="@form" />
                                     <f:selectItems var="specialite" value="#{specialiteControleur.specialites}"
                                                    itemLabel="#{specialite.specialite}" itemValue="#{specialite}"/>
-                                   
+
                                 </p:selectOneMenu>
                                 <p:message for="specialite_et" id="msgspecialite"/>
-                                
+
                                 <h:outputText value="Date de naissance"/>
                                 <p:calendar locale="fr" value="#{etudiantControleur.etudiant.datenaissance}"
                                             navigator="true" id="datenaissance"/>
                                 <p:message for="datenaissance" id="msgdatenaissance"/>
-                             
+
                                 <p:outputLabel for="mail" value="Adresse mail"/>
                                 <p:inputText id="mail" validatorMessage="Entrer un mail valide"
                                              value="#{etudiantControleur.etudiant.mail}">
@@ -200,7 +220,7 @@
                     </h:form>
                 </p:dialog>
 
-                
+
             </ui:define>
         </ui:composition>
     </h:body>
