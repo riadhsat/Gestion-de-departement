@@ -13,6 +13,33 @@
                 Espace étudiant | Envoie du rapport
             </ui:define>
             <ui:define name="center">
+                <h:form id="formfile" style=" margin-left: 210px; margin-right: auto;">
+                    <p:fieldset legend="le rapport :" >
+                        <h:panelGrid  columns="4" cellpadding="10"  rendered="#{importRapport.nomfile ne null}">
+                        <p:column>
+                             <p:outputLabel  value="Nom de fichier :" />
+                             <p:outputLabel  value="#{importRapport.nomfile}" />
+                        </p:column>
+                        <p:column>
+                             <p:outputLabel  value="Taille : " />
+                             <p:outputLabel  value="#{importRapport.taille}" />
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel  value="Date envoi : " />
+                            <p:outputLabel  value="#{importRapport.dateupload}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                            </p:outputLabel>
+                        </p:column>                    
+                        <p:column>
+                            <p:commandButton value="Telecharger"  
+                                             onclick="PrimeFaces.monitorDownload(start, stop);">
+                                    <p:fileDownload value="#{importRapport.filedown}" />
+                            </p:commandButton>
+                        </p:column>                        
+                        </h:panelGrid>
+                        <p:outputLabel  value="pas de fichier" rendered="#{importRapport.nomfile eq null}"/>                 
+                    </p:fieldset>
+                </h:form>    
             <h:form enctype="multipart/form-data" style=" margin-left: 210px; margin-right: auto;">
                 <p:fieldset legend="Importation de rapport" >
                     <p:growl id="messages" showDetail="true"  autoUpdate="true"/>
@@ -24,12 +51,26 @@
                                   label="Choisie"
                                   uploadLabel="Envoyer"
                                   cancelLabel="Annuler"
-                                  update="up" 
+                                  update="up :formfile" 
                                   fileLimitMessage="vous pouvez envoyer un fichier seulement"
                               invalidSizeMessage="Maximum de taille de fichier : 8 MB"
                               invalidFileMessage="Fichier inaccepté"/>
                 </p:fieldset>
-            </h:form> 
+            </h:form>
+                <p:dialog modal="true" widgetVar="statusDialog" draggable="false" 
+                          closable="false" resizable="false">
+                    <h:graphicImage library="img" name="ajax-loader.gif"
+                                    style="margin-right: 12px; vertical-align: middle;"/>
+                    <h:outputText value="Veuiller Patienter..." style="white-space: nowrap;"/>
+                </p:dialog>
+                <script type="text/javascript">
+                    function start() {
+                        PF('statusDialog').show();
+                    }
+                    function stop() {
+                        PF('statusDialog').hide();
+                    }
+                </script>
             </ui:define>
         </ui:composition>
     </h:body>
