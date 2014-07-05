@@ -2,6 +2,8 @@
 package com.projetIF4.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +11,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -40,11 +43,15 @@ public class ImportRapport implements Serializable {
     
     @PostConstruct
     public void init(){
-        getFileRapport();
+        try {
+            getFileRapport();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ImportRapport.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     
-    public void getFileRapport(){
+    public void getFileRapport() throws FileNotFoundException{
         ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
         String FileName = servletContext.getRealPath("") + File.separator + "Rapport";
         File dossier = new File(FileName);//test existance de dossier rapport
@@ -63,35 +70,40 @@ public class ImportRapport implements Serializable {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(Files[0].lastModified());
         dateupload = c.getTime();
-        }
-        
+        preparationFileDownload();        
+        }       
     }
     
-    public void FileDownloadView() {
+    public void preparationFileDownload() throws FileNotFoundException{
         
         ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
         String newFileName = servletContext.getRealPath("") + File.separator + "Rapport";
         File dossier = new File(newFileName);
-        File[] files=dossier.listFiles();
+        File[] files=dossier.listFiles();        
         newFileName=newFileName+File.separator+files[0].getName();
-        InputStream stream = ((ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext()).getResourceAsStream("/resources/demo/images/optimus.jpg");
-        filedown= new DefaultStreamedContent(stream, "inline/pdf; charset=UTF-8", files[0].getName());
+        String contentType = FacesContext.getCurrentInstance().getExternalContext().getMimeType(newFileName);
+        InputStream stream;
+        stream = new FileInputStream(new File(newFileName));
+        filedown= new DefaultStreamedContent(stream, contentType, files[0].getName());
     }
     
     
     public void upload(FileUploadEvent  event) {
         
         file=event.getFile();
-        FacesMessage message = new FacesMessage("Succesful", file.getFileName() + " envoyer avec succes");
+        FacesMessage message = new FacesMessage("Succesful", file.getFileName() + " a été envoyée avec succès");
         FacesContext.getCurrentInstance().addMessage(null, message);
         EnregisrementRapport();
-        getFileRapport();
+        try {
+            getFileRapport();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ImportRapport.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void EnregisrementRapport(){
         ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
         String newFileName = servletContext.getRealPath("") + File.separator + "Rapport";
-        
         File dossier = new File(newFileName);//test existance de dossier rapport
         if(!dossier.exists()){
         dossier.mkdir();
@@ -111,25 +123,22 @@ public class ImportRapport implements Serializable {
             in.close();
             out.flush();
             out.close();
-            FacesMessage message = new FacesMessage("Succesful", file.getFileName() + " is uploaded.");
+            FacesMessage message = new FacesMessage("Succes", file.getFileName() + " a été enregistré avec succès");
             FacesContext.getCurrentInstance().addMessage(null, message);
         
         }
         catch(IOException e){
-        FacesMessage message = new FacesMessage("Erreur", file.getFileName() + " is not uploaded.");
+        FacesMessage message = new FacesMessage("Erreur", file.getFileName() + " : Erreur d'enregistrement.");
             FacesContext.getCurrentInstance().addMessage(null, message);
         }
     }
     
-     public StreamedContent getFiledown() {
-         ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-        String newFileName = servletContext.getRealPath("") + File.separator + "Rapport";
-        File dossier = new File(newFileName);
-        File[] files=dossier.listFiles();
-        newFileName=newFileName+File.separator+files[0].getName();
-        String contentType = FacesContext.getCurrentInstance().getExternalContext().getMimeType(newFileName);
-        InputStream stream = ((ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext()).getResourceAsStream(newFileName);
-        filedown= new DefaultStreamedContent(stream, contentType, files[0].getName());
+     public StreamedContent getFiledown(){   
+        try {
+            preparationFileDownload();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ImportRapport.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return filedown;
     }   
 
