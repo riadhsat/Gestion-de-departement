@@ -31,9 +31,9 @@
                             </p:outputLabel>
                         </p:column>                    
                         <p:column>
-                            <p:commandButton value="Telecharger"  
+                            <p:commandButton value="Telecharger" ajax="false" update=":formfile"
                                              onclick="PrimeFaces.monitorDownload(start, stop);">
-                                    <p:fileDownload value="#{importRapport.filedown}" />
+                                    <p:fileDownload value="#{importRapport.filedown}"  />
                             </p:commandButton>
                         </p:column>                        
                         </h:panelGrid>
