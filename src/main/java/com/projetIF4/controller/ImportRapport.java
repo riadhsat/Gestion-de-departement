@@ -63,7 +63,8 @@ public class ImportRapport implements Serializable {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(Files[0].lastModified());
         dateupload = c.getTime();
-        }        
+        }
+        
     }
     
     public void FileDownloadView() {
