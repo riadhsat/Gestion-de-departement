@@ -43,18 +43,18 @@
             <h:form enctype="multipart/form-data" style=" margin-left: 210px; margin-right: auto;">
                 <p:fieldset legend="Importation de rapport" >
                     <p:growl id="messages" showDetail="true"  autoUpdate="true"/>
-                    <p:outputLabel value="un fichier PDF : (MAX Taille : 8MB)" />
+                    <p:outputLabel value="un fichier PDF : (MAX Taille : 8Mo)" />
                     <p:fileUpload id="up" fileUploadListener="#{importRapport.upload}"
                                   mode="advanced" sizeLimit="10000000"                                 
                                   allowTypes="/(\.|\/)(pdf)$/"
                                   fileLimit="1"                                  
-                                  label="Choisie"
+                                  label="Choisir"
                                   uploadLabel="Envoyer"
                                   cancelLabel="Annuler"
                                   update="up :formfile" 
-                                  fileLimitMessage="vous pouvez envoyer un fichier seulement"
-                              invalidSizeMessage="Maximum de taille de fichier : 8 MB"
-                              invalidFileMessage="Fichier inaccepté"/>
+                                  fileLimitMessage="Vous pouvez choisir un seul fichier à la fois"
+                              invalidSizeMessage="Fichier trop volumineux ! Taille MAX : 8 Mo"
+                              invalidFileMessage="Veuillez choisir un fichier PDF valide"/>
                 </p:fieldset>
             </h:form>
                 <p:dialog modal="true" widgetVar="statusDialog" draggable="false" 
