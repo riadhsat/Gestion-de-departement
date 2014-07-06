@@ -50,6 +50,22 @@ public class ImportRapport implements Serializable {
         }
     }
     
+    public void freeFile(File[] files) {
+        try {
+            for(int i=0;i<files.length;i++){
+                try{
+                    FileInputStream fis = new FileInputStream(files[i]);
+                    fis.close();
+                } catch (FileNotFoundException ex) {
+                    System.err.println("exception sans risque");
+                }
+            }
+        }
+        catch (IOException ex) {
+            Logger.getLogger(ImportRapport.class.getName()).log(Level.SEVERE, null, ex);
+        }    
+    }
+    
     
     public void getFileRapport() throws FileNotFoundException{
         ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
@@ -60,18 +76,30 @@ public class ImportRapport implements Serializable {
         }
         File[] Files=dossier.listFiles();
         if(Files.length!=0){
-            nomfile=Files[0].getName();
-            if(Files[0].length()>=1048576){
-                taille=Files[0].length()/(1024*1024)+"Mo";
+            File filelast=lastFileenvoye(Files);
+            nomfile=filelast.getName();
+            if(filelast.length()>=1048576){
+                taille=filelast.length()/(1024*1024)+"Mo";
             }
             else{
-                taille=Files[0].length()/1024+"Ko";
+                taille=filelast.length()/1024+"Ko";
             }        
         Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(Files[0].lastModified());
+        c.setTimeInMillis(filelast.lastModified());
         dateupload = c.getTime();
-        preparationFileDownload();        
+        freeFile(Files);
         }       
+    }
+    
+    public File lastFileenvoye(File[] files){
+        
+        File lastfile=files[0];
+        for(int i=1;i<files.length;i++){
+            if(files[i].lastModified()>=lastfile.lastModified()){
+                lastfile=files[i];            
+            }
+        }   
+        return lastfile;    
     }
     
     public void preparationFileDownload() throws FileNotFoundException{
@@ -79,12 +107,14 @@ public class ImportRapport implements Serializable {
         ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
         String newFileName = servletContext.getRealPath("") + File.separator + "Rapport";
         File dossier = new File(newFileName);
-        File[] files=dossier.listFiles();        
-        newFileName=newFileName+File.separator+files[0].getName();
+        File[] files=dossier.listFiles();
+        File filelast=lastFileenvoye(files);
+        newFileName=newFileName+File.separator+filelast.getName();
         String contentType = FacesContext.getCurrentInstance().getExternalContext().getMimeType(newFileName);
         InputStream stream;
         stream = new FileInputStream(new File(newFileName));
-        filedown= new DefaultStreamedContent(stream, contentType, files[0].getName());
+        filedown= new DefaultStreamedContent(stream, contentType,filelast.getName());
+        freeFile(files);
     }
     
     
@@ -101,6 +131,19 @@ public class ImportRapport implements Serializable {
         }
     }
     
+    public boolean testerExistanceNomFile(String nomAtester ,File dossier){
+        
+        File[] files=dossier.listFiles();
+        for(int i = 0 ;i<files.length;i++){
+            if(nomAtester.equals(files[i].getName())){
+                freeFile(files);
+                return true;
+            }
+        }
+        freeFile(files);
+        return false;   
+    }
+    
     public void EnregisrementRapport(){
         ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
         String newFileName = servletContext.getRealPath("") + File.separator + "Rapport";
@@ -108,13 +151,32 @@ public class ImportRapport implements Serializable {
         if(!dossier.exists()){
         dossier.mkdir();
         }
-        File[] files=dossier.listFiles();
-        if(files.length!=0){
-            files[0].delete();
-        }        
         try{
+        File[] files=dossier.listFiles();
+        String nomFile=newFileName+File.separator+file.getFileName();
+        if(files.length!=0){
+            if(filedown!=null){           
+                filedown.getStream().close();
+            }
+                filedown=null;
+                for(int i=0;i<files.length;i++){
+                    System.err.println("nom :"+files[i].getName());
+                    if(files[i].delete()){                        
+                        System.err.println("effacer");
+                    }else{
+                        files[i].deleteOnExit();
+                        System.err.println("non efacer");
+                    }
+                }
+                freeFile(files);
+                if(testerExistanceNomFile(file.getFileName(),dossier)){
+                    String nom =file.getFileName().substring(0,file.getFileName().length()-4) +"1"+file.getFileName().substring(file.getFileName().length()-4);
+                    nomFile=newFileName+File.separator+nom;                
+                }                
+            } 
+        
             InputStream in=file.getInputstream();
-            OutputStream out = new FileOutputStream(new File(newFileName+File.separator+file.getFileName()));
+            OutputStream out = new FileOutputStream(new File(nomFile));
             int read = 0;
             byte[] bytes = new byte[1024];
             while ((read = in.read(bytes)) != -1) {
@@ -122,10 +184,9 @@ public class ImportRapport implements Serializable {
             }
             in.close();
             out.flush();
-            out.close();
+            out.close();            
             FacesMessage message = new FacesMessage("Succes", file.getFileName() + " a été enregistré avec succès");
-            FacesContext.getCurrentInstance().addMessage(null, message);
-        
+            FacesContext.getCurrentInstance().addMessage(null, message);                   
         }
         catch(IOException e){
         FacesMessage message = new FacesMessage("Erreur", file.getFileName() + " : Erreur d'enregistrement.");
