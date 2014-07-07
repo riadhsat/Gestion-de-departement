@@ -21,29 +21,42 @@
             <ui:define name="center" id="def_center">
 
                 <h:outputScript library="js" name="script.js" target="head"/>
-
+                <p:growl id="messages" autoUpdate="true" showDetail="true" />
                 <h:form id="calendrier">
-                    <p:panel header="Planning des projets" >
-                        <p:growl id="messages" autoUpdate="true" showDetail="true" />
-
-                        <h:panelGrid columns="4" cellpadding="10" style="width: 700px;margin: auto;">
-                            <p:outputLabel for="select_salle" value="Salle" />
+                    <p:panel header="Planning des projets de Fin D'anneé" >                        
+                        <div style="text-align: center" >
+                        <p:outputLabel value="Afficher calendrier par :"/>
+                        </div>
+                        <h:panelGrid columns="6" cellpadding="10" style="width: 700px;margin: auto;">
+                            <p:outputLabel for="select_salle" value="Salle:" />
                             <p:selectOneMenu id="select_salle" value="#{planningPFAcontroleur.selectedSalle}"
                                              converter="genericConverter" style="width: 150px">
-                                <f:ajax  render="@form"/>
+                                <f:ajax  render="@this" execute="@this"/>
                                 <f:selectItem itemLabel="Tout Salle" itemValue="#{null}"/>
                                 <f:selectItems var="salle" value="#{salleControleur.salles}"
                                                itemLabel="#{salle.salle}" itemValue="#{salle}"/>
-                                <p:ajax update="schedule messages :form_projets:pan_projets"                                           
+                                <p:ajax update="schedule"                                           
+                                        listener="#{planningPFAcontroleur.mettreAJourCalander}"
+                                        onstart="PF('blockUIWidget').block()"
+                                        oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="select_enseignant" value="Enseignant:"/>
+                            <p:selectOneMenu id="select_enseignant" value="#{planningPFAcontroleur.selectedEnseignant}"
+                                             converter="genericConverter" style="width: 150px">
+                                <f:ajax  render="@this" execute="@this" />
+                                <f:selectItem itemLabel="Toute Enseignant" itemValue="#{null}"/>
+                                <f:selectItems var="enseignant" value="#{enseignantControleur.listEnseignants}"
+                                               itemLabel="#{enseignant.prenom} #{enseignant.nom}" itemValue="#{enseignant}"/>
+                                <p:ajax update="schedule"                                           
                                         listener="#{planningPFAcontroleur.mettreAJourCalander}"
                                         onstart="PF('blockUIWidget').block()"
                                         oncomplete="PF('blockUIWidget').unblock()"/>
                             </p:selectOneMenu>
                             
-                            <p:outputLabel for="select_section" value="Planning par Section :"/>
+                            <p:outputLabel for="select_section" value="Section:"/>
                             <p:selectOneMenu id="select_section" value="#{planningPFAcontroleur.selectedSection}"
                                              converter="genericConverter" style="width: 150px">
-                                <f:ajax  render="@form"/>
+                                <f:ajax render="@this" execute="@this"/>
                                 <f:selectItem itemLabel="Toute Section" itemValue="#{null}"/>
                                 <f:selectItems var="section" value="#{planningPFAcontroleur.sectionNonTerminal}"
                                                itemLabel="#{section.section}" itemValue="#{section}"/>
