@@ -39,6 +39,7 @@ public class PlanningPFEcontroleur implements Serializable{
     //salle selectionne pour affichage
     private Salle selectedSalle;
     private Section selectedSection;
+    private Enseignant selectedEnseignant;
     
     private List<Pfe> toutProjetPlanifier;
     private List<Pfe> toutProjetNonPlanifier;
@@ -76,6 +77,7 @@ public class PlanningPFEcontroleur implements Serializable{
         FacesContext context = FacesContext.getCurrentInstance();
         selectedSalle =(Salle)context.getExternalContext().getSessionMap().get("salle");
         selectedSection=(Section)context.getExternalContext().getSessionMap().get("section");
+        selectedEnseignant=(Enseignant)context.getExternalContext().getSessionMap().get("enseignant");
         
     }
     
@@ -154,55 +156,7 @@ public class PlanningPFEcontroleur implements Serializable{
         }}
         return false;
 }
-    
-    public void update() {
-        Date date = selectedPfe.getDatesoutenance();
-        boolean disponile=true;
-        String message="";
-        if (date != null) {
-            Date date_final = new Date(heure_soutenance.getTime() + date.getTime());
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date_final);
-            cal.add(Calendar.HOUR, 1);
-            selectedPfe.setDatesoutenance(cal.getTime());
-            selectedPfe.setDureesoutenance(duree_Soutenance);            
-            for (Pfe p : toutProjetPlanifier){
-                if(!selectedPfe.equals(p)){
-                    //salle indisponible
-                    if(intersection2PFE(selectedPfe,p)
-                       &&intersectionSalle(selectedPfe,p)){
-                        disponile=false;
-                        message=message+" Salle indisponible";
-                    }
-                    //enseignant indisponible
-                     if(intersection2PFE(selectedPfe,p)                       
-                            &&intersection2Enseignant(selectedPfe,p)){
-                        disponile=false;
-                        message=message+" Enseignant indisponible";
-                    }      
-                          
-                
-                if(!disponile)
-                    break;
-                }
-            }}
-            if(disponile){
-                if (selectedPfe.update()) {
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Succès", "Mise à jour avec succés."));
-                    updateCalendar();
-                    System.err.println("succes");
-                 } else {
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erreur", "Mise à jour échouée."));
-            System.err.println("ECHEC !!! " + selectedPfe.getDatesoutenance());
-        }
-        }else{
-            System.out.println("ajout echoué"+message);}         
-    }
-    
+
     public void annulerProjet(){    
         selectedPfe.setDatesoutenance(null);
         selectedPfe.setSalle(null);
@@ -217,6 +171,8 @@ public class PlanningPFEcontroleur implements Serializable{
             Calendar cal = Calendar.getInstance();
             Date date = p.getDatesoutenance();
             cal.setTime(date);
+            cal.add(Calendar.HOUR, 1);
+            date=cal.getTime();
             // traitement de la duree de soutenance
             String s = p.getDureesoutenance();
             String[] t = s.split(":");
@@ -493,8 +449,30 @@ public class PlanningPFEcontroleur implements Serializable{
             mettreAJourCalander();       
        }
        
-       public void mettreAJourCalander(){           
-           System.err.println("mettre a jour succes: mettreAJourCalander");           
+       public boolean verifFiltreSalle(Pfe p){
+           if(selectedSalle==null)
+               return true;
+        return Objects.equals(selectedSalle, p.getSalle());
+       }
+        public boolean verifFiltreSection(Pfe p){
+           if(selectedSection==null)
+               return true;
+        return Objects.equals(selectedSection, p.getSection());
+       }
+        public boolean verifFiltreEnseignant(Pfe p){
+            if(selectedEnseignant==null)
+               return true;
+           return Objects.equals(selectedEnseignant, p.getChefjury())||
+                   Objects.equals(selectedEnseignant, p.getEncadreur())||
+                   Objects.equals(selectedEnseignant, p.getRapporteur());
+       }
+       
+       public void mettreAJourCalander(){
+           System.err.println("mettre a jour succes: mettreAJourCalander");
+           if(selectedEnseignant==null)
+               System.err.println("Enseignant : null");
+           else 
+               System.err.println("Enseignant :"+selectedEnseignant.getPrenom());                      
            if(selectedSection==null)
            System.err.println("section : null");
            else
@@ -505,21 +483,12 @@ public class PlanningPFEcontroleur implements Serializable{
            else
                System.err.println("salle :"+selectedSalle.getSalle());
            context.getExternalContext().getSessionMap().put("salle", selectedSalle);
+           context.getExternalContext().getSessionMap().put("enseignant", selectedEnseignant);
            eventModel = new DefaultScheduleModel();
            for (Pfe p : toutProjetPlanifier) {
-               if(selectedSalle==null){
-                    if(selectedSection==null)
-                            addprojet(p);
-                    else if(Objects.equals(p.getSection(), selectedSection))
-                            addprojet(p);
-               }else{
-                   if(selectedSalle.equals(p.getSalle())){
-                       if(selectedSection==null)
-                            addprojet(p);
-                    else if(Objects.equals(p.getSection(), selectedSection))
-                            addprojet(p);  
-                       }
-                   }
+               if(verifFiltreSalle(p) && verifFiltreSection(p) && verifFiltreEnseignant(p)){
+                   addprojet(p);
+               }
            }
        }
     
@@ -747,7 +716,12 @@ public class PlanningPFEcontroleur implements Serializable{
     public void setSelectedSection(Section selectedSection) {
         this.selectedSection = selectedSection;
     }
-    
-    
-    
+
+    public Enseignant getSelectedEnseignant() {
+        return selectedEnseignant;
+    }
+
+    public void setSelectedEnseignant(Enseignant selectedEnseignant) {
+        this.selectedEnseignant = selectedEnseignant;
+    }
 }
