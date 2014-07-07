@@ -41,7 +41,8 @@ public class PlanningPFAcontroleur implements Serializable{
     private ScheduleModel eventModel;
     //salle selectionne pour affichage
     private Salle selectedSalle;
-     private Section selectedSection;
+    private Section selectedSection;
+    private Enseignant selectedEnseignant;     
     
     private List<Pfa> toutProjetPlanifier;
     private List<Pfa> toutProjetNonPlanifier;
@@ -75,6 +76,7 @@ public class PlanningPFAcontroleur implements Serializable{
         FacesContext context = FacesContext.getCurrentInstance();
         selectedSalle =(Salle)context.getExternalContext().getSessionMap().get("salle");
         selectedSection=(Section)context.getExternalContext().getSessionMap().get("section");
+        selectedEnseignant=(Enseignant)context.getExternalContext().getSessionMap().get("enseignant");
     }
     
     
@@ -91,7 +93,7 @@ public class PlanningPFAcontroleur implements Serializable{
             toutProjetNonPlanifier = new ArrayList<>(PfaControleur.getPFANonPlanifies());
             toutProjetNonPlanifierChercher = new ArrayList<>(toutProjetNonPlanifier);
             toutProjetPlanifier = new ArrayList<>(PfaControleur.getPFAPlanifies());
-             FacesContext context = FacesContext.getCurrentInstance();
+            FacesContext context = FacesContext.getCurrentInstance();
             context.getExternalContext().getSessionMap().put("section", selectedSection);
             afficherNonPlanifies(null);
             mettreAJourCalander();       
@@ -101,6 +103,8 @@ public class PlanningPFAcontroleur implements Serializable{
             Calendar cal = Calendar.getInstance();
             Date date = p.getDatesoutenance();
             cal.setTime(date);
+            cal.add(Calendar.HOUR, 1);
+            date=cal.getTime();
             // traitement de la duree de soutenance
             String s = p.getDureesoutenance();
             String[] t = s.split(":");
@@ -110,9 +114,29 @@ public class PlanningPFAcontroleur implements Serializable{
             cal.add(Calendar.MINUTE, dureeMinutes);
             eventModel.addEvent(new Soutenance(p, date, cal.getTime()));       
         }
+         
+         public boolean verifFiltreSalle(Pfa p){
+           if(selectedSalle==null)
+               return true;
+        return Objects.equals(selectedSalle, p.getSalle());
+       }
+        public boolean verifFiltreSection(Pfa p){
+           if(selectedSection==null)
+               return true;
+        return Objects.equals(selectedSection, p.getSection());
+       }
+        public boolean verifFiltreEnseignant(Pfa p){
+            if(selectedEnseignant==null)
+               return true;
+           return Objects.equals(selectedEnseignant, p.getEncardeur());
+       }
         
         public void mettreAJourCalander(){
-            System.err.println("mettre a jour succes: mettreAJourCalander");           
+            System.err.println("mettre a jour succes: mettreAJourCalander");
+            if(selectedEnseignant==null)
+               System.err.println("Enseignant : null");
+           else 
+               System.err.println("Enseignant :"+selectedEnseignant.getPrenom());
            if(selectedSection==null)
                     System.err.println("section : null");
            else
@@ -124,22 +148,13 @@ public class PlanningPFAcontroleur implements Serializable{
            else
                System.err.println("salle :"+selectedSalle.getSalle());
            context.getExternalContext().getSessionMap().put("salle", selectedSalle);
+           context.getExternalContext().getSessionMap().put("enseignant", selectedEnseignant);
            eventModel = new DefaultScheduleModel();
            for (Pfa p : toutProjetPlanifier) {
-               if(selectedSalle==null){                    
-                            if(selectedSection==null)
-                                addprojet(p);
-                            else if(Objects.equals(p.getSection(), selectedSection))
-                                addprojet(p);                   
-               }else{
-                   if(selectedSalle.equals(p.getSalle())){
-                            if(selectedSection==null)
-                                addprojet(p);
-                            else if(Objects.equals(p.getSection(), selectedSection))
-                                addprojet(p);  
-                       }
-                   }
-           }
+               if(verifFiltreSalle(p) && verifFiltreSection(p) && verifFiltreEnseignant(p)){
+                   addprojet(p);
+               }
+           }           
        }
     
     
@@ -263,60 +278,6 @@ public class PlanningPFAcontroleur implements Serializable{
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Operation échouée"));
             System.err.println("modification avec succes");      
         }
-    
-    public String update(){
-        Date date = selectedPfa.getDatesoutenance();
-        boolean disponile=true;
-        String message="";
-        if (date != null&& selectedPfa.getSalle()!=null && heure_soutenance!=null) {
-            Date date_final = new Date(heure_soutenance.getTime() + date.getTime());
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date_final);
-            cal.add(Calendar.HOUR, 1);
-            selectedPfa.setDatesoutenance(cal.getTime());
-            selectedPfa.setDureesoutenance(duree_Soutenance);
-            for (Pfa p : toutProjetPlanifier){
-                if(!selectedPfa.equals(p)){
-                    //salle indisponible
-                    if(intersection2Temps(selectedPfa,p)
-                       && p.getSalle().equals(selectedPfa.getSalle())){
-                        disponile=false;
-                        message=message+" Salle "+selectedPfa.getSalle().getSalle()+" est  indisponible";
-                    }
-                    System.err.println("pfa encad:"+selectedPfa.getEncardeur().getCinEnseignant());
-                    //enseignant indisponible
-                     if(intersection2Temps(selectedPfa,p)                       
-                            &&p.getEncardeur().getCinEnseignant()==selectedPfa.getEncardeur().getCinEnseignant()){
-                        disponile=false;
-                        message=message+"\n Enseignant "+selectedPfa.getEncardeur().getNom()+" est indisponible";
-                         System.err.println("enseignant indis");
-                    }
-                    if(!disponile)
-                    break;                    
-                }                
-            }
-            if(disponile){
-                if (selectedPfa.update()) {
-                    System.err.println("update avec succes");
-                    updateCalendar();
-                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("messageDialog");
-                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("selectedPfa");
-                }else{
-                    System.err.println("erreur lors de mise a jour");
-                }
-            }else{
-                System.err.println("message :"+message);
-                FacesContext context = FacesContext.getCurrentInstance();
-                context.getExternalContext().getSessionMap().put("messageDialog",message);
-                context.getExternalContext().getSessionMap().put("selectedPfa",selectedPfa);
-            }            
-        }else{
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("messageDialog","la date et la salle doit être indiquée");
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedPfa",selectedPfa);        
-        }
-        updateCalendar(); 
-        return "pretty:AdminGestionPlanningPFA";
-    }
     
     public void eliminerPfaSelected(){
             
@@ -548,7 +509,12 @@ public class PlanningPFAcontroleur implements Serializable{
     public void setSelectedSection(Section selectedSection) {
         this.selectedSection = selectedSection;
     }
-    
-    
-    
+
+    public Enseignant getSelectedEnseignant() {
+        return selectedEnseignant;
+    }
+
+    public void setSelectedEnseignant(Enseignant selectedEnseignant) {
+        this.selectedEnseignant = selectedEnseignant;
+    }
 }
