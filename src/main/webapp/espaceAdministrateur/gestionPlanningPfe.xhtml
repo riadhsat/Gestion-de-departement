@@ -23,12 +23,14 @@
                 <p:growl id="messages" autoUpdate="true" showDetail="true" />
                 <h:form id="calendrier">                    
                     <p:panel header="Planning des projets de fin d'études" >
-                        
-                        <h:panelGrid columns="4" cellpadding="10" style="width: 700px;margin: auto;">
-                            <p:outputLabel for="select_salle" value="Planning par Salle"/>
+                        <div style="text-align: center" >
+                        <p:outputLabel value="Afficher calendrier par :"/>
+                        </div>
+                        <h:panelGrid columns="6" cellpadding="10" style="width: 700px;margin: auto;">
+                            <p:outputLabel for="select_salle" value="Salle:"/>
                              <p:selectOneMenu id="select_salle" value="#{planningPFEcontroleur.selectedSalle}"
                                              converter="genericConverter" style="width: 150px">
-                                <f:ajax  render="@form"/>
+                                <f:ajax  render="@this" execute="@this"/>
                                 <f:selectItem itemLabel="Toute Salle" itemValue="#{null}"/>
                                 <f:selectItems var="salle" value="#{salleControleur.salles}"
                                                itemLabel="#{salle.salle}" itemValue="#{salle}"/>
@@ -36,11 +38,23 @@
                                         listener="#{planningPFEcontroleur.mettreAJourCalander}"
                                         onstart="PF('blockUIWidget').block()"
                                         oncomplete="PF('blockUIWidget').unblock()"/>
-                            </p:selectOneMenu> 
-                            <p:outputLabel for="select_section" value="Planning par Section :"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="select_enseignant" value="Enseignant:"/>
+                            <p:selectOneMenu id="select_enseignant" value="#{planningPFEcontroleur.selectedEnseignant}"
+                                             converter="genericConverter" style="width: 150px">
+                                <f:ajax  render="@this" execute="@this" />
+                                <f:selectItem itemLabel="Toute Enseignant" itemValue="#{null}"/>
+                                <f:selectItems var="enseignant" value="#{enseignantControleur.listEnseignants}"
+                                               itemLabel="#{enseignant.prenom} #{enseignant.nom}" itemValue="#{enseignant}"/>
+                                <p:ajax update="schedule"                                           
+                                        listener="#{planningPFEcontroleur.mettreAJourCalander}"
+                                        onstart="PF('blockUIWidget').block()"
+                                        oncomplete="PF('blockUIWidget').unblock()"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="select_section" value="Section:"/>
                             <p:selectOneMenu id="select_section" value="#{planningPFEcontroleur.selectedSection}"
                                              converter="genericConverter" style="width: 150px">
-                                <f:ajax  render="@form"/>
+                                <f:ajax  render="@this" execute="@this"/>
                                 <f:selectItem itemLabel="Toute Section" itemValue="#{null}"/>
                                 <f:selectItems var="section" value="#{planningPFEcontroleur.sectionTerminal}"
                                                itemLabel="#{section.section}" itemValue="#{section}"/>
