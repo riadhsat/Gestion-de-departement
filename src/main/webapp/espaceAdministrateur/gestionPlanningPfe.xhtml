@@ -27,7 +27,7 @@
                         <p:outputLabel value="Afficher calendrier par :"/>
                         </div>
                         <h:panelGrid columns="6" cellpadding="10" style="width: 700px;margin: auto;">
-                            <p:outputLabel for="select_salle" value="Salle:"/>
+                            <p:outputLabel for="select_salle" value="Salle: "/>
                              <p:selectOneMenu id="select_salle" value="#{planningPFEcontroleur.selectedSalle}"
                                              converter="genericConverter" style="width: 150px">
                                 <f:ajax  render="@this" execute="@this"/>
