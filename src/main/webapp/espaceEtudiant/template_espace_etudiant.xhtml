@@ -42,31 +42,36 @@
                     </h:form>
                 </p:layoutUnit> 
                 <!-- Centre des pages -->
+
                 <p:layoutUnit position="center">
-
-
-                    <!-- Menu Gauche --> 
-
-                    <h:form style="width:206px; position:absolute;">
-                        <p:panelMenu>
-                            <p:submenu label="Proposition de Projets">
-                                <p:menuitem value="Proposer un projet" action="pretty:EtuProposerProjet" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
-                                <p:menuitem value="Projets proposés" action="pretty:EtuProjetsProposes" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
-                            </p:submenu>
-                            <p:separator/>
-                            <p:submenu label="Consultation des Projets">
-                                <p:menuitem value="Consulter liste des projets" action="pretty:EtuConsulterProjets" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
-                            </p:submenu>
-                            <p:separator/>
-                            <p:submenu label="Envoyer un rapport">
-                                <p:menuitem value="Envoyer un rapport" action="pretty:ImportRapport" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
-                            </p:submenu>
-                            <p:separator />                                            
-                        </p:panelMenu>                           
-                    </h:form>
                     <ui:insert name="center"/>
                     <ui:insert name="script"/>
                 </p:layoutUnit>
+
+                <!-- Menu Gauche --> 
+                <p:layoutUnit position="west" styleClass="menuGauche" size="200" resizable="false" closable="false" collapsible="true">
+                <h:form style="width:185px; position:absolute;">
+                    <p:panelMenu>
+                        <p:submenu label="Proposition de Projets">
+                            <p:menuitem value="Proposer un projet" action="pretty:EtuProposerProjet" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                            <p:menuitem value="Projets proposés" action="pretty:EtuProjetsProposes" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                        </p:submenu>
+                        <p:separator/>
+                        <p:submenu label="Consultation des Projets">
+                            <p:menuitem value="Consulter liste des projets" action="pretty:EtuConsulterProjets" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                        </p:submenu>
+                        <p:separator/>
+                        <p:submenu label="Envoyer un rapport">
+                            <p:menuitem value="Envoyer un rapport" action="pretty:ImportRapport" onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
+                        </p:submenu>
+                        <p:separator />                                            
+                    </p:panelMenu>                           
+                </h:form>
+
+                </p:layoutUnit>
+
+
+
             </p:layout>
             <pe:blockUI widgetVar="blockUIWidget">
                 <h:panelGrid columns="2">
