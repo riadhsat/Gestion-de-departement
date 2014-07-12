@@ -81,7 +81,26 @@ public class ExcellConverter {
 
         return cellVectorHolder;
     }
+
+    public static Vector<String> readHeader(InputStream file, int premiereLigne) {
+        Vector<String> cellVectorHolder = new Vector<>();
+        try {
+            POIFSFileSystem myFileSystem = new POIFSFileSystem(file);
+            HSSFWorkbook myWorkBook = new HSSFWorkbook(myFileSystem);
+            HSSFSheet mySheet = myWorkBook.getSheetAt(0);
+
+            //traitement de l'en-tete
+            HSSFRow row = mySheet.getRow(premiereLigne);
+            for (int i = row.getFirstCellNum(); i < row.getPhysicalNumberOfCells(); i++) {
+                HSSFCell c = (HSSFCell) row.getCell(i);
+                cellVectorHolder.add(c.getStringCellValue());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return cellVectorHolder;
+    }
 }
 
 
-//~ Formatted by Jindent --- http://www.jindent.com
+

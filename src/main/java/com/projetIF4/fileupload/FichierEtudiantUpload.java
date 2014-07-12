@@ -56,6 +56,14 @@ public class FichierEtudiantUpload {
         this.premLine = premLine;
     }
 
+    public void choisirColonnes()
+    {
+        
+    }
+    
+    
+    
+    
     /**
      *
      */
@@ -69,14 +77,6 @@ public class FichierEtudiantUpload {
                 row = (Vector) data.get(i);
                 System.out.println(row);
 
-                Etudiant e = new Etudiant();
-                e.setCinetu(Integer.valueOf(String.valueOf(row.get(2))));
-                e.setSection(new Section(String.valueOf(row.get(0))));
-                e.setIns(Integer.valueOf(String.valueOf(row.get(1))));
-                e.setNomPrenom(String.valueOf(row.get(3)));
-
-                System.err.println(e.save());
-
             }
 
         } catch (IOException e) {
@@ -87,4 +87,4 @@ public class FichierEtudiantUpload {
 }
 
 
-//~ Formatted by Jindent --- http://www.jindent.com
+
